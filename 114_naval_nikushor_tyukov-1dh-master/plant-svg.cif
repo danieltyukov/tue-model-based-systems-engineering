@@ -1,0 +1,256 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Connection of the SVG file to the plant model for visualization
+
+import  "plant.cif";
+svgfile "plant.svg";
+
+// Function to set the correct color of the product visualization
+func string prod_fill(product prod):
+    return   switch prod:
+                case GREY : "#b3b3b3"
+                case RED  : "#f00000"
+                case BLACK: "#444444"
+                else        "blue"         // NONE
+             end;
+end
+
+// UI panel
+svgout id "s_Dstartbutton"      attr "fill" value if s_Dstartbutton:   "darkgreen"  else "green"    end;
+svgout id "s_Dstopbutton"       attr "fill" value if s_Dstopbutton:    "maroon"     else "#500"     end;
+svgout id "s_Dresetbutton"      attr "fill" value if s_Dresetbutton:   "black"      else "#4d4d4d"  end;
+
+svgout id "s_Dautoswitch_manual"    attr "fill" value if not s_Dautoswitch : "green"       else "#d4aa00"   end;
+svgout id "s_Dautoswitch_automatic" attr "fill" value if s_Dautoswitch   :   "green"       else "#d4aa00"   end;
+
+// Display products
+
+// Copy the product SVG element 5 times for each buffer
+svgcopy id "prod_pusher_1" post "_1";
+svgcopy id "prod_pusher_1" post "_2";
+svgcopy id "prod_pusher_1" post "_3";
+svgcopy id "prod_pusher_1" post "_4";
+svgcopy id "prod_pusher_1" post "_5";
+
+svgcopy id "prod_pusher_2" post "_1";
+svgcopy id "prod_pusher_2" post "_2";
+svgcopy id "prod_pusher_2" post "_3";
+svgcopy id "prod_pusher_2" post "_4";
+svgcopy id "prod_pusher_2" post "_5";
+
+svgcopy id "prod_pusher_3" post "_1";
+svgcopy id "prod_pusher_3" post "_2";
+svgcopy id "prod_pusher_3" post "_3";
+svgcopy id "prod_pusher_3" post "_4";
+svgcopy id "prod_pusher_3" post "_5";
+
+// Only the first product moves horizontally with x_block; others are stationary
+
+// Buffer 1 (RED products)
+// For product 1
+svgout id "prod_pusher_1_1" attr "display" value if size(buffer1.products) >= 1: "inline" else "none" end;
+svgout id "prod_pusher_1_1" attr "fill"    value if size(buffer1.products) >= 1:
+    prod_fill(buffer1.products[0]) else "none" end;
+svgout id "prod_pusher_1_1" attr "transform" value if size(buffer1.products) >= 1:
+    fmt("translate(%s, %s)", product1_pos.x_product, product1_pos.y_product) else "translate(0,0)" end;
+
+// For product 2
+svgout id "prod_pusher_1_2" attr "display" value if size(buffer1.products) >= 2: "inline" else "none" end;
+svgout id "prod_pusher_1_2" attr "fill"    value if size(buffer1.products) >= 2:
+    prod_fill(buffer1.products[1]) else "none" end;
+svgout id "prod_pusher_1_2" attr "transform" value if size(buffer1.products) >= 2:
+    fmt("translate(0, %s)", pusher1.y_block - 6) else "translate(0,0)" end;
+
+// For product 3
+svgout id "prod_pusher_1_3" attr "display" value if size(buffer1.products) >= 3: "inline" else "none" end;
+svgout id "prod_pusher_1_3" attr "fill"    value if size(buffer1.products) >= 3:
+    prod_fill(buffer1.products[2]) else "none" end;
+svgout id "prod_pusher_1_3" attr "transform" value if size(buffer1.products) >= 3:
+    fmt("translate(0, %s)", pusher1.y_block - 12) else "translate(0,0)" end;
+
+// For product 4
+svgout id "prod_pusher_1_4" attr "display" value if size(buffer1.products) >= 4: "inline" else "none" end;
+svgout id "prod_pusher_1_4" attr "fill"    value if size(buffer1.products) >= 4:
+    prod_fill(buffer1.products[3]) else "none" end;
+svgout id "prod_pusher_1_4" attr "transform" value if size(buffer1.products) >= 4:
+    fmt("translate(0, %s)", pusher1.y_block - 18) else "translate(0,0)" end;
+
+// For product 5
+svgout id "prod_pusher_1_5" attr "display" value if size(buffer1.products) >= 5: "inline" else "none" end;
+svgout id "prod_pusher_1_5" attr "fill"    value if size(buffer1.products) >= 5:
+    prod_fill(buffer1.products[4]) else "none" end;
+svgout id "prod_pusher_1_5" attr "transform" value if size(buffer1.products) >= 5:
+    fmt("translate(0, %s)", pusher1.y_block - 24) else "translate(0,0)" end;
+
+// Buffer 2 (GREY products)
+
+// For product 1
+svgout id "prod_pusher_2_1" attr "display" value if size(buffer2.products) >= 1: "inline" else "none" end;
+svgout id "prod_pusher_2_1" attr "fill"    value if size(buffer2.products) >= 1:
+    prod_fill(buffer2.products[0]) else "none" end;
+svgout id "prod_pusher_2_1" attr "transform" value if size(buffer2.products) >= 1:
+    fmt("translate(%s, %s)", product2_pos.x_product, product2_pos.y_product) else "translate(0,0)" end;
+
+// For product 2
+svgout id "prod_pusher_2_2" attr "display" value if size(buffer2.products) >= 2: "inline" else "none" end;
+svgout id "prod_pusher_2_2" attr "fill"    value if size(buffer2.products) >= 2:
+    prod_fill(buffer2.products[1]) else "none" end;
+svgout id "prod_pusher_2_2" attr "transform" value if size(buffer2.products) >= 2:
+    fmt("translate(0, %s)", pusher2.y_block - 6) else "translate(0,0)" end;
+
+// For product 3
+svgout id "prod_pusher_2_3" attr "display" value if size(buffer2.products) >= 3: "inline" else "none" end;
+svgout id "prod_pusher_2_3" attr "fill"    value if size(buffer2.products) >= 3:
+    prod_fill(buffer2.products[2]) else "none" end;
+svgout id "prod_pusher_2_3" attr "transform" value if size(buffer2.products) >= 3:
+    fmt("translate(0, %s)", pusher2.y_block - 12) else "translate(0,0)" end;
+
+// For product 4
+svgout id "prod_pusher_2_4" attr "display" value if size(buffer2.products) >= 4: "inline" else "none" end;
+svgout id "prod_pusher_2_4" attr "fill"    value if size(buffer2.products) >= 4:
+    prod_fill(buffer2.products[3]) else "none" end;
+svgout id "prod_pusher_2_4" attr "transform" value if size(buffer2.products) >= 4:
+    fmt("translate(0, %s)", pusher2.y_block - 18) else "translate(0,0)" end;
+
+// For product 5
+svgout id "prod_pusher_2_5" attr "display" value if size(buffer2.products) >= 5: "inline" else "none" end;
+svgout id "prod_pusher_2_5" attr "fill"    value if size(buffer2.products) >= 5:
+    prod_fill(buffer2.products[4]) else "none" end;
+svgout id "prod_pusher_2_5" attr "transform" value if size(buffer2.products) >= 5:
+    fmt("translate(0, %s)", pusher2.y_block - 24) else "translate(0,0)" end;
+
+
+// Buffer 3 (GREY 2 products)
+
+// For product 1
+svgout id "prod_pusher_3_1" attr "display" value if size(buffer3.products) >= 1: "inline" else "none" end;
+svgout id "prod_pusher_3_1" attr "fill"    value if size(buffer3.products) >= 1:
+    prod_fill(buffer3.products[0]) else "none" end;
+svgout id "prod_pusher_3_1" attr "transform" value if size(buffer3.products) >= 1:
+    fmt("translate(%s, %s)", product3_pos.x_product, product3_pos.y_product) else "translate(0,0)" end;
+
+// For product 2
+svgout id "prod_pusher_3_2" attr "display" value if size(buffer3.products) >= 2: "inline" else "none" end;
+svgout id "prod_pusher_3_2" attr "fill"    value if size(buffer3.products) >= 2:
+    prod_fill(buffer3.products[1]) else "none" end;
+svgout id "prod_pusher_3_2" attr "transform" value if size(buffer3.products) >= 2:
+    fmt("translate(0, %s)", pusher3.y_block - 6) else "translate(0,0)" end;
+
+// For product 3
+svgout id "prod_pusher_3_3" attr "display" value if size(buffer3.products) >= 3: "inline" else "none" end;
+svgout id "prod_pusher_3_3" attr "fill"    value if size(buffer3.products) >= 3:
+    prod_fill(buffer3.products[2]) else "none" end;
+svgout id "prod_pusher_3_3" attr "transform" value if size(buffer3.products) >= 3:
+    fmt("translate(0, %s)", pusher3.y_block - 12) else "translate(0,0)" end;
+
+// For product 4
+svgout id "prod_pusher_3_4" attr "display" value if size(buffer3.products) >= 4: "inline" else "none" end;
+svgout id "prod_pusher_3_4" attr "fill"    value if size(buffer3.products) >= 4:
+    prod_fill(buffer3.products[3]) else "none" end;
+svgout id "prod_pusher_3_4" attr "transform" value if size(buffer3.products) >= 4:
+    fmt("translate(0, %s)", pusher3.y_block - 18) else "translate(0,0)" end;
+
+// For product 5
+svgout id "prod_pusher_3_5" attr "display" value if size(buffer3.products) >= 5: "inline" else "none" end;
+svgout id "prod_pusher_3_5" attr "fill"    value if size(buffer3.products) >= 5:
+    prod_fill(buffer3.products[4]) else "none" end;
+svgout id "prod_pusher_3_5" attr "transform" value if size(buffer3.products) >= 5:
+    fmt("translate(0, %s)", pusher3.y_block - 24) else "translate(0,0)" end;
+
+svgout id "prod_pusher_1"         attr "display" value "none";
+svgout id "prod_pusher_1"         attr "fill"    value "none";
+
+svgout id "prod_pusher_2"         attr "display" value "none";
+svgout id "prod_pusher_2"         attr "fill"    value "none";
+
+svgout id "prod_pusher_3"         attr "display" value "none";
+svgout id "prod_pusher_3"         attr "fill"    value "none";
+
+// Operating modes
+svgout id "user_input"          attr "fill" value if input_mode.user_input: "blue"   else "lightgrey" end;
+
+// Actuator lights
+svgout id "a_Dstartled"         attr "fill" value if a_Dstartled:           "lime"   else "red"       end;
+svgout id "a_Dstartled2"        attr "fill" value if a_Dstartled:           "yellow" else "lightgrey" end; // LED
+svgout id "a_Dresetled"         attr "fill" value if a_Dresetled:           "lime"   else "red"       end;
+svgout id "a_Dresetled2"        attr "fill" value if a_Dresetled:           "yellow" else "lightgrey" end; // LED
+svgout id "a_DledQ1"            attr "fill" value if a_DledQ1:              "lime"   else "red"       end;
+svgout id "a_DledQ1_2"          attr "fill" value if a_DledQ1:              "yellow" else "lightgrey" end; // LED
+svgout id "a_DledQ2"            attr "fill" value if a_DledQ2:              "lime"   else "red"       end;
+svgout id "a_DledQ2_2"          attr "fill" value if a_DledQ2:              "yellow" else "lightgrey" end; // LED
+
+svgout id "a_pusher1"           attr "fill" value if a_pusher1:             "lime" else "red" end;
+svgout id "a_pusher2"           attr "fill" value if a_pusher2:             "lime" else "red" end;
+svgout id "a_pusher3"           attr "fill" value if a_pusher3:             "lime" else "red" end;
+
+svgout id "a_x2distributing"    attr "fill" value if a_x2distributing:      "lime" else "red" end;
+svgout id "a_x2testing"         attr "fill" value if a_x2testing:           "lime" else "red" end;
+svgout id "a_zdown"             attr "fill" value if a_zdown:               "lime" else "red" end;
+svgout id "a_gripperclose"      attr "fill" value if a_gripperclose:        "lime" else "red" end;
+svgout id "a_transfer2pickpos"  attr "fill" value if a_transfer2pickpos:    "lime" else "red" end;
+svgout id "a_transfer2droppos"  attr "fill" value if a_transfer2droppos:    "lime" else "red" end;
+svgout id "a_vacuum"            attr "fill" value if a_vacuum:              "lime" else "red" end;
+svgout id "a_ejectpulse"        attr "fill" value if a_ejectpulse:          "lime" else "red" end;
+svgout id "a_handlingready"     attr "fill" value if a_handlingready:       "lime" else "red" end;
+
+// Output lights
+svgout id "s_pusher1_in"        attr "fill" value if s_pusher1_in:          "lime" else "red" end;
+svgout id "s_pusher1_out"       attr "fill" value if s_pusher1_out:         "lime" else "red" end;
+svgout id "s_stack1filled"      attr "fill" value if s_stack1filled:        "lime" else "red" end;
+svgout id "s_product1"          attr "fill" value if s_product1:            "lime" else "red" end;
+svgout id "s_pusher2_in"        attr "fill" value if s_pusher2_in:          "lime" else "red" end;
+svgout id "s_pusher2_out"       attr "fill" value if s_pusher2_out:         "lime" else "red" end;
+svgout id "s_stack2filled"      attr "fill" value if s_stack2filled:        "lime" else "red" end;
+svgout id "s_product2"          attr "fill" value if s_product2:            "lime" else "red" end;
+svgout id "s_pusher3_in"        attr "fill" value if s_pusher3_in:          "lime" else "red" end;
+svgout id "s_pusher3_out"       attr "fill" value if s_pusher3_out:         "lime" else "red" end;
+svgout id "s_stack3filled"      attr "fill" value if s_stack3filled:        "lime" else "red" end;
+svgout id "s_product3"          attr "fill" value if s_product3:            "lime" else "red" end;
+svgout id "s_handlingbusy"      attr "fill" value if s_handlingbusy:        "lime" else "red" end;
+svgout id "s_xpos_at1"          attr "fill" value if s_xpos_at1:            "lime" else "red" end;
+svgout id "s_xpos_at2"          attr "fill" value if s_xpos_at2:            "lime" else "red" end;
+svgout id "s_xpos_at3"          attr "fill" value if s_xpos_at3:            "lime" else "red" end;
+svgout id "s_xpos_atdrop"       attr "fill" value if s_xpos_atdrop:         "lime" else "red" end;
+svgout id "s_zpos_atup"         attr "fill" value if s_zpos_atup:           "lime" else "red" end;
+svgout id "s_zpos_atdown"       attr "fill" value if s_zpos_atdown:         "lime" else "red" end;
+svgout id "s_gripper"           attr "fill" value if s_gripper:             "lime" else "red" end;
+svgout id "s_transfer_atpickup"  attr "fill" value if s_transfer_atpickup:  "lime" else "red" end;
+svgout id "s_transfer_atdrop"    attr "fill" value if s_transfer_atdrop:    "lime" else "red" end;
+svgout id "s_transfer_athalfway" attr "fill" value if s_transfer_athalfway: "lime" else "red" end;
+svgout id "s_vacuum"            attr "fill" value if s_vacuum:              "lime" else "red" end;
+svgout id "s_product4"          attr "fill" value if s_product4:            "lime" else "red" end;
+svgout id "s_testingbusy"       attr "fill" value if s_testingbusy:         "lime" else "red" end;
+
+// Pusher animations
+svgout id "rect6061" attr "transform" value fmt("translate(%s, 0)", pusher1.x_pusher);
+svgout id "rect6063" attr "transform" value fmt("translate(%s, 0)", pusher2.x_pusher);
+svgout id "rect6065" attr "transform" value fmt("translate(%s, 0)", pusher3.x_pusher);
+
+// Claw
+
+// Transformations to the claws based on x_claw_offset
+svgout id "crane_left_claw" attr "transform" value fmt("translate(%s, %s)",
+                                                        crane1.x_claw_offset + 0.12, crane1.y_arm_offset);
+svgout id "crane_right_claw" attr "transform" value fmt("translate(%s, %s)",
+                                                        -crane1.x_claw_offset, crane1.y_arm_offset);
+
+// Transformations to the other crane elements based on y_arm_offset
+svgout id "crane_gripper_base" attr "transform" value fmt("translate(0, %s)", crane1.y_arm_offset);
+svgout id "rect6067" attr "transform" value fmt("translate(0, %s)", crane1.y_arm_offset);
+
+// Translation of the crane arm to pick-up and drop positions
+svgout id  "CraneArm"           attr "transform" value fmt("translate(%s, 0)", crane1.x_crane);
+
+// Transfer Lever
+
+// Rotation of the lever
+svgout id "TransferLever" attr "transform" value fmt("rotate(%s,220.66544,135.30804)", lever1.angle);
+svgout id "sucker" attr "transform" value fmt("translate(%s,%s)", lever1.dx_levertip, lever1.dy_levertip);
+
+// Use cases
+svgout id "use_case_1"          attr "fill" value if not usecase_1.init:    "blue" else "lightgrey" end;
+svgout id "use_case_2"          attr "fill" value if not usecase_2.init:    "blue" else "lightgrey" end;
+svgout id "use_case_3"          attr "fill" value if not usecase_3.init:    "blue" else "lightgrey" end;

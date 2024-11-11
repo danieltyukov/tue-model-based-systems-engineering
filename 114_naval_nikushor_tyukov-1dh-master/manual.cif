@@ -1,0 +1,60 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Import of actuators and definition of actuator buttons needed
+// to test the plant in manual mode using 1-manual-plant.tooldef
+
+svgfile "plant.svg";
+
+// Used for actuators that can be clicked in the SVG visualization
+automaton def Button(alg string name):
+    uncontrollable u_press;
+    location off:
+        initial;
+        edge u_press goto on;   // toggle button state after each press
+
+    location on:
+         edge u_press goto off; // toggle button state after each press
+
+    svgin  id name    event u_press;
+end
+
+// actuators
+alg bool a_Dstartled        = button_Dstartled.on;
+alg bool a_Dresetled        = button_Dresetled.on;
+alg bool a_DledQ1           = button_DledQ1.on; // Used for unexpected product removal
+alg bool a_DledQ2           = button_DledQ2.on;
+
+alg bool a_pusher1          = button_pusher1.on;
+alg bool a_pusher2          = button_pusher2.on;
+alg bool a_pusher3          = button_pusher3.on;
+
+alg bool a_x2distributing   = button_x2distributing.on;
+alg bool a_x2testing        = button_x2testing.on;
+alg bool a_zdown            = button_zdown.on;
+alg bool a_gripperclose     = button_gripperclose.on;
+alg bool a_transfer2pickpos = button_transfer2pickpos.on;
+alg bool a_transfer2droppos = button_transfer2droppos.on;
+alg bool a_vacuum           = button_vacuum.on;
+alg bool a_ejectpulse       = button_ejectpulse.on;
+alg bool a_handlingready    = button_handlingready.on;
+
+//manual buttons
+button_Dstartled:           Button("a_Dstartled");
+button_Dresetled:           Button("a_Dresetled");
+button_DledQ1:              Button("a_DledQ1");
+button_DledQ2:              Button("a_DledQ2");
+button_pusher1:             Button("a_pusher1");
+button_pusher2:             Button("a_pusher2");
+button_pusher3:             Button("a_pusher3");
+button_x2distributing:      Button("a_x2distributing");
+button_x2testing:           Button("a_x2testing");
+button_zdown:               Button("a_zdown");
+button_gripperclose:        Button("a_gripperclose");
+button_transfer2pickpos:    Button("a_transfer2pickpos");
+button_transfer2droppos:    Button("a_transfer2droppos");
+button_vacuum:              Button("a_vacuum");
+button_ejectpulse:          Button("a_ejectpulse");
+button_handlingready:       Button("a_handlingready");

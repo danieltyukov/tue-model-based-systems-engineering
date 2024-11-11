@@ -1,0 +1,70 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+// Import of actuators and definition of sensors for the plant
+
+import "plant.cif";
+
+// INPUTS
+input bool a_Dstartled;
+input bool a_Dresetled;
+input bool a_DledQ1;
+input bool a_DledQ2;
+
+input bool a_pusher1;
+input bool a_pusher2;
+input bool a_pusher3;
+
+input bool a_x2distributing;
+input bool a_x2testing;
+input bool a_zdown;
+input bool a_gripperclose;
+input bool a_transfer2pickpos;
+input bool a_transfer2droppos;
+input bool a_vacuum;
+input bool a_ejectpulse;
+input bool a_handlingready;
+
+// OUTPUTS
+alg bool s_Dstartbutton = operator.s_Dstartbutton;
+alg bool s_Dstopbutton  = not(operator.s_Dstopbutton); // inverted
+alg bool s_Dautoswitch  = AutoSwitch.s_Dautoswitch;
+alg bool s_Dresetbutton = operator.s_Dresetbutton;
+
+alg bool s_pusher1_in  = pusher1.s_pusher_in;
+alg bool s_pusher1_out = pusher1.s_pusher_out;
+alg bool s_product1    = product1_pos.s_product;
+
+alg bool s_pusher2_in  = pusher2.s_pusher_in;
+alg bool s_pusher2_out = pusher2.s_pusher_out;
+alg bool s_product2    = product2_pos.s_product;
+
+alg bool s_pusher3_in  = pusher3.s_pusher_in;
+alg bool s_pusher3_out = pusher3.s_pusher_out;
+alg bool s_product3    = product3_pos.s_product;
+
+alg bool s_stack1filled = buffer1.s_stackfilled;
+alg bool s_stack2filled = buffer2.s_stackfilled;
+alg bool s_stack3filled = buffer3.s_stackfilled;
+
+alg bool s_handlingbusy = crane1.s_handlingbusy;
+
+alg bool s_Dinitialized = true;
+
+alg bool s_xpos_at1          = crane1.s_xpos_at1;
+alg bool s_xpos_at2          = crane1.s_xpos_at2;
+alg bool s_xpos_at3          = crane1.s_xpos_at3;
+alg bool s_xpos_atdrop       = crane1.s_xpos_atdrop;
+alg bool s_zpos_atup         = crane1.s_zpos_atup;
+alg bool s_zpos_atdown       = crane1.s_zpos_atdown;
+alg bool s_gripper           = crane1.s_gripper;
+
+alg bool s_transfer_atpickup  = lever1.s_transfer_atpickup;
+alg bool s_transfer_atdrop    = lever1.s_transfer_atdrop;
+alg bool s_transfer_athalfway = lever1.s_transfer_athalfway;
+alg bool s_vacuum             = lever1.s_vacuum;
+alg bool s_product4           = crane1.s_product4;
+alg bool s_testingbusy        = TestingSwitch.s_testingbusy;
+
+alg bool s_Hinitialized       = true;

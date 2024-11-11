@@ -1,0 +1,295 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+// s_testingbusy
+
+// Controller model
+
+import "ctrl-io.cif";
+
+//Example of a very simple controller that turns on the startled when the start button is pressed
+automaton startup:
+
+    alg bool a_Dstartled = running;
+
+    event init, start, stop;
+
+    location wait_init:
+        initial;
+        edge init   when s_Dinitialized         goto wait_start;
+
+
+    location wait_start:
+        edge start  when s_Dstartbutton         goto running;
+
+    location running:
+        edge stop   when (not s_Dstopbutton)    goto wait_start;
+
+
+end
+
+// lost product sync b/n arm and buffer pashalka
+
+event lost_product;
+
+automaton def Pusher(alg bool s_pusher_in, s_pusher_out, s_product, s_stackfilled):
+
+    event turn_on, turn_off, move_out, push_in, count, activate;
+
+    cont t der 1;
+
+    disc bool a_pusher;
+
+    location off:
+    initial;
+    edge turn_on when startup.running goto idle;
+
+    location idle:
+    edge move_out  when not s_product and s_pusher_in and s_stackfilled and startup.running
+                  do a_pusher:= true, t:=0  goto opening;
+    edge turn_off when not startup.running goto off;
+
+    location opening:
+    edge push_in when s_pusher_out and t >= 1 and startup.running
+                 do a_pusher := false goto wait;
+    edge turn_off when not startup.running goto off;
+
+    location wait:
+    edge count when lever.a_ejectpulse do t:= 0 goto countdown;
+    edge lost_product do t:= 0 goto countdown2;
+
+    location countdown:
+    edge activate when t > 1 goto idle;
+
+    location countdown2:
+    edge activate when t > 5 goto idle;
+
+
+end
+
+pusher1ctrl : Pusher(s_pusher1_in, s_pusher1_out, s_product1, s_stack1filled);
+pusher2ctrl : Pusher(s_pusher2_in, s_pusher2_out, s_product2, s_stack2filled);
+pusher3ctrl : Pusher(s_pusher3_in, s_pusher3_out, s_product3, s_stack3filled);
+
+automaton roboarm:
+
+    event turn_on, turn_off,
+          lower_arm, raise_arm, stop_arm,
+          close_claw, open_claw, resume,
+          move1, move2, move3, move_drop;
+    cont t der 1;
+
+    disc int pos = 1;
+
+    disc bool a_x2distributing = false;
+    disc bool a_zdown = false;
+    disc bool a_x2testing = false;
+    disc bool a_gripper = false;
+
+    location off:
+    initial;
+    edge turn_on when startup.running and pos = 1 goto idle;
+
+    location idle:
+    edge move1 when t > 1.5 and sequence_ctrl.seq = 1 and s_product1 and startup.running
+               do a_x2distributing := true goto PickUp1;
+    edge move2 when t > 1.5 and sequence_ctrl.seq = 2 and s_product2 and startup.running
+               do a_x2distributing := true goto PickUp2;
+    edge move3 when t > 1.5 and sequence_ctrl.seq = 3 and s_product3 and startup.running
+               do a_x2distributing := true goto PickUp3;
+    //edge lost_product when not (s_product1 or s_product2 or s_product3) and t > 1.5 do t:= 0;
+    edge turn_off when not startup.running do pos := 1  goto off;
+
+    location PickUp1:
+    edge stop_arm when s_xpos_at1 and startup.running
+                  do a_x2testing := true, t := 0 goto Stop;
+    edge turn_off when not startup.running
+                  do a_x2distributing := false, pos := 11  goto off;
+
+    location PickUp2:
+    edge stop_arm when s_xpos_at2 and startup.running
+                  do a_x2testing := true, t:= 0 goto Stop;
+    edge turn_off when not startup.running
+                  do a_x2distributing := false, pos := 12 goto off;
+
+    location PickUp3:
+    edge stop_arm when s_xpos_at3 and startup.running
+                  do a_x2testing := true, t := 0 goto Stop;
+    edge turn_off when not startup.running
+                  do a_x2distributing := false, pos := 13 goto off;
+
+    location Stop:
+    edge resume when t > 0.5 and startup.running
+                do (a_x2distributing, a_x2testing) := (false,false) goto LowerArm;
+    edge turn_off when not startup.running
+                  do (a_x2distributing, a_x2testing) := (false,false), pos := 2 goto off;
+
+    location LowerArm:
+    edge lower_arm when s_zpos_atup and not s_xpos_atdrop and startup.running
+                   do a_zdown := true, t := 0 goto Grab;
+    edge lower_arm when s_zpos_atup and s_xpos_atdrop
+                                    and not s_product4 and not (lever.suck or lever.transfer_drop or lever.eject)
+                                    and startup.running
+                   do a_zdown := true, t:=0 goto Drop;
+    edge turn_off when not startup.running do pos := 3 goto off;
+
+    location Grab:
+    edge close_claw when s_zpos_atdown and startup.running
+                    do a_gripper := true goto RaiseArm;
+    edge turn_off when not startup.running
+                  do a_zdown := false, pos := 4 goto off;
+
+    location RaiseArm:
+    edge raise_arm when s_gripper and not s_xpos_atdrop and startup.running
+                   do a_zdown := false goto Distribute;
+    edge raise_arm when s_xpos_atdrop and startup.running
+                   do a_zdown := false, t:= 0 goto idle;
+    edge turn_off when not startup.running do pos := 5 goto off;
+
+    location Distribute:
+    edge move_drop when s_zpos_atup and s_gripper
+                   and not (lever.suck or lever.transfer_pick or lever.suck or lever.transfer_drop or lever.halfway)
+                   and startup.running
+                   do a_x2testing := true goto DropOff;
+    edge lost_product when not s_gripper and not s_product4 do a_gripper := false goto idle;
+    edge turn_off when not startup.running do pos := 6 goto off;
+
+    location DropOff:
+    edge stop_arm when s_xpos_atdrop and startup.running
+                  do a_x2distributing := true, t := 0 goto Stop;
+    edge lost_product when not s_gripper and not s_product4 do a_x2testing := false, a_gripper := false goto idle;
+    edge turn_off when not startup.running
+                  do a_x2testing := false, pos := 7 goto off;
+
+    location Drop:
+    edge open_claw when s_zpos_atdown and startup.running
+                   do a_gripper := false goto RaiseArm;
+    edge turn_off when not startup.running do pos := 8 goto off;
+
+end
+
+
+automaton lever:
+
+    event turn_on, active, resume, pickup, vacuum, transfer, drop, count, rotate_half, standby;
+
+    disc bool a_transfer2pickpos = false;
+    disc bool a_transfer2droppos = false;
+    disc bool a_vacuum           = false;
+    disc bool a_ejectpulse       = false;
+
+    cont t der 1;
+
+    location off:
+    initial;
+    edge turn_on when startup.running goto idle;
+
+    location idle:
+        edge active when s_product4 and s_zpos_atup and not s_xpos_atdrop do t:= 0 goto wait_arm;
+
+    location wait_arm:
+        edge resume when t > 1 and startup.running goto transfer_pick;
+
+    location transfer_pick:
+        edge pickup when s_zpos_atup and not s_xpos_atdrop and startup.running
+                    do a_transfer2pickpos := true
+                    goto suck;
+
+     location suck:
+        edge vacuum when s_product4 and s_transfer_atpickup and startup.running
+                     do (a_vacuum, a_transfer2pickpos) := (true, false)
+                     goto transfer_drop;
+
+     location transfer_drop:
+        edge transfer when s_vacuum and startup.running
+                      do a_transfer2droppos := true
+                      goto halfway;
+
+     location halfway:
+        edge when s_transfer_athalfway and startup.running goto eject;
+
+     location eject:
+        edge drop  when s_transfer_atdrop and switch_control.Manual and startup.running
+                   do (a_vacuum, a_ejectpulse, t) := (false, true, 0)
+                   goto wait;
+        edge drop  when s_transfer_atdrop and switch_control.Auto and not s_testingbusy and startup.running
+                   do (a_vacuum, a_ejectpulse, t) := (false, true, 0)
+                   goto wait;
+
+     location wait:
+        edge count when t > 0.3 and s_transfer_atdrop
+                   do (a_ejectpulse, a_transfer2droppos) := (false, false), t := 0 goto reset;
+
+     location reset:
+        edge rotate_half when t > 0.5 and s_transfer_atdrop do a_transfer2pickpos := true goto stop;
+
+     location stop:
+        edge standby when s_transfer_athalfway do a_transfer2pickpos := false goto idle;
+
+end
+
+automaton sequence_ctrl:
+
+    event turn_on, turn_off, control23, control123, take1, take2, take3,
+                                                    drop1, drop2, drop3;
+
+
+    disc int seq = 2;
+    disc int alter_mode = 1;
+    disc int flip = 2;
+
+    location off:
+    initial;
+    edge turn_on when startup.running goto idle;
+
+    location idle:
+    edge control23 when s_stack2filled and s_stack3filled and not s_stack1filled goto Alternate23;
+    edge control123 when s_stack1filled and s_stack2filled and s_stack3filled do alter_mode := 2 goto Alternate2131;
+
+    location Alternate23:
+    edge take2 when s_product2 and s_xpos_at2 and s_zpos_atdown and s_gripper goto Deliver2;
+    edge take3 when s_product3 and s_xpos_at3 and s_zpos_atdown and s_gripper goto Deliver3;
+    edge turn_off when not startup.running do seq := 1 goto off;
+
+    location Alternate2131:
+    edge take1 when s_product1 and s_xpos_at1 and s_zpos_atdown and s_gripper goto Deliver1;
+    edge take2 when s_product2 and s_xpos_at2 and s_zpos_atdown and s_gripper goto Deliver2;
+    edge take3 when s_product3 and s_xpos_at3 and s_zpos_atdown and s_gripper goto Deliver3;
+    edge turn_off when not startup.running do seq := 1 goto off;
+
+    location Deliver3:
+    edge drop1 when s_product4 and (alter_mode = 1) and s_xpos_atdrop do seq := 2 goto Alternate23;
+    edge drop1 when s_product4 and (alter_mode = 2) and s_xpos_atdrop do seq := 1 goto Alternate2131;
+    edge turn_off when not startup.running do seq := 1 goto off;
+
+    location Deliver2:
+    edge drop2 when s_product4 and (alter_mode = 1) and s_xpos_atdrop do seq := 3 goto Alternate23;
+    edge drop2 when s_product4 and (alter_mode = 2) and s_xpos_atdrop do seq := 1 goto Alternate2131;
+    edge turn_off when not startup.running do seq := 1 goto off;
+
+    location Deliver1:
+    edge drop3 when s_product4 and s_xpos_atdrop and (flip = 2) do flip := 3, seq := 3  goto Alternate2131;
+    edge drop3 when s_product4 and s_xpos_atdrop and (flip = 3) do flip := 2, seq := 2  goto Alternate2131;
+
+end
+
+automaton switch_control:
+
+event turn_on, switch_auto, switch_manual, update;
+
+location off:
+initial;
+edge turn_on when startup.running goto idle;
+
+location idle:
+edge switch_auto when s_Dautoswitch and startup.running and a_vacuum goto Auto;
+edge switch_manual when not s_Dautoswitch and startup.running and a_vacuum goto Manual;
+
+location Manual:
+edge update when a_ejectpulse goto idle;
+
+location Auto:
+edge update when a_ejectpulse goto idle;
+
+end

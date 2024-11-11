@@ -1,0 +1,391 @@
+// DISTRIBUTING:
+
+// Input interface. A hardware sensor is coupled to an input variable below
+// (hardware to mapping), and the input variable below is merged with the
+// input variable of the controller (mapping to controller).
+
+input bool s_Dstartbutton;       // 0
+input bool s_Dstopbutton;        // 1
+input bool s_Dautoswitch;        // 2
+input bool s_Dresetbutton;       // 3
+
+input bool s_Din4;               // 4
+input bool s_Din5;               // 5
+input bool s_Din6;               // 6
+input bool s_Din7;               // 7
+
+input bool s_pusher1_in;         // 8
+input bool s_pusher1_out;        // 9
+input bool s_stack1filled;       // 10
+input bool s_product1;           // 11
+input bool s_pusher2_in;         // 12
+input bool s_pusher2_out;        // 13
+input bool s_stack2filled;       // 14
+input bool s_product2;           // 15
+input bool s_pusher3_in;         // 16
+input bool s_pusher3_out;        // 17
+input bool s_stack3filled;       // 18
+input bool s_product3;           // 19
+input bool s_handlingbusy;       // 20
+
+// Special input indicating that initialization has finished. Once it becomes
+// 'true' the controller may use the other sensors. Then also the requested
+// output values will be used to set the actual outputs.
+
+alg   bool s_Dinitialized;       // 21
+
+equation   s_Dinitialized = HardwareMap.initialized;
+
+// HANDLING:
+
+// Input interface. A hardware sensor is coupled to an input variable below
+// (hardware to mapping), and the input variable below is merged with the
+// input variable of the controller (mapping to controller).
+
+input bool s_Hstartbutton;       // 22
+input bool s_Hstopbutton;        // 23
+input bool s_Hautoswitch;        // 24
+input bool s_Hresetbutton;       // 25
+
+input bool s_Hin4;               // 26
+input bool s_Hin5;               // 27
+input bool s_Hin6;               // 28
+input bool s_Hin7;               // 29
+
+//input bool s_product1;         // 30 (same sensor as for distributing station)
+//input bool s_product2;         // 31 (same sensor as for distributing station)
+//input bool s_product3;         // 32 (same sensor as for distributing station)
+input bool s_xpos_at1;           // 33
+input bool s_xpos_at2;           // 34
+input bool s_xpos_at3;           // 35
+input bool s_xpos_atdrop;        // 36
+input bool s_zpos_atup;          // 37
+input bool s_zpos_atdown;        // 38
+input bool s_gripper;            // 39
+input bool s_transfer_atpickup;  // 40
+input bool s_transfer_atdrop;    // 41
+input bool s_transfer_athalfway; // 42
+input bool s_vacuum;             // 43
+input bool s_product4;           // 44
+input bool s_testingbusy;        // 45
+
+// Special input indicating that initialization has finished. Once it becomes
+// 'true' the controller may use the other sensors. Then also the requested
+// output values will be used to set the actual outputs.
+
+alg   bool s_Hinitialized;       // 46
+
+equation   s_Hinitialized = HardwareMap.initialized;
+
+// DISTRIBUTING:
+
+// Output interface. A variable (e.g. algebraic variable) from the controller
+// is merged with an input variable below (controller to mapping). The hardware
+// mapping interprets the value provided by the controller as requested output
+// value, and sets the actual output value (mapping to hardware, see below).
+
+input bool a_Dstartled;        // 0
+input bool a_Dresetled;        // 1
+input bool a_DledQ1;           // 2
+input bool a_DledQ2;           // 3
+
+input bool a_Dout4;            // 4
+input bool a_Dout5;            // 5
+input bool a_Dout6;            // 6
+input bool a_Dout7;            // 7
+
+input bool a_pusher1;          // 8
+input bool a_pusher2;          // 9
+input bool a_pusher3;          // 10
+
+// HANDLING:
+
+// Output interface. A variable (e.g. algebraic variable) from the controller
+// is merged with an input variable below (controller to mapping). The hardware
+// mapping interprets the value provided by the controller as requested output
+// value, and sets the actual output value (mapping to hardware, see below).
+
+
+// Second UI not available for the students.
+alg bool a_Hstartled = false;  // 11
+alg bool a_Hresetled = false;  // 12
+alg bool a_HledQ1    = false;  // 13
+alg bool a_HledQ2    = false;  // 14
+
+input bool a_Hout4;            // 15
+input bool a_Hout5;            // 16
+input bool a_Hout6;            // 17
+input bool a_Hout7;            // 18
+
+input bool a_x2distributing;   // 19
+input bool a_x2testing;        // 20
+input bool a_zdown;            // 21
+input bool a_gripperclose;     // 22
+input bool a_transfer2pickpos; // 23
+input bool a_transfer2droppos; // 24
+input bool a_vacuum;           // 25
+input bool a_ejectpulse;       // 26
+input bool a_handlingready;    // 27
+
+// Hardware mapping behavior. Includes the initialization sequence, and
+// setting of the hardware outputs based on requested outputs (mapping to
+// hardware).
+
+automaton HardwareMap:
+  // DISTRIBUTING:
+
+  // Output interface. The discrete variables below are coupled to hardware
+  // actuators (mapping to hardware).
+  disc bool out_a_Dstartled        = false; // 0
+  disc bool out_a_Dresetled        = false; // 1
+  disc bool out_a_DledQ1           = true;  // 2 (on during initialization)
+  disc bool out_a_DledQ2           = true;  // 3 (on during initialization)
+
+  disc bool out_a_Dout4            = false; // 4
+  disc bool out_a_Dout5            = false; // 5
+  disc bool out_a_Dout6            = false; // 6
+  disc bool out_a_Dout7            = false; // 7
+
+  disc bool out_a_pusher1          = false; // 8
+  disc bool out_a_pusher2          = false; // 9
+  disc bool out_a_pusher3          = false; // 10
+
+  // HANDLING:
+
+  // Output interface. The discrete variables below are coupled to hardware
+  // actuators (mapping to hardware).
+  disc bool out_a_Hstartled        = false; // 11
+  disc bool out_a_Hresetled        = false; // 12
+  disc bool out_a_HledQ1           = true;  // 13 (on during initialization)
+  disc bool out_a_HledQ2           = true;  // 14 (on during initialization)
+
+  disc bool out_a_Hout4            = false; // 15
+  disc bool out_a_Hout5            = false; // 16
+  disc bool out_a_Hout6            = false; // 17
+  disc bool out_a_Hout7            = false; // 18
+
+  disc bool out_a_x2distributing   = true;  // 19
+  disc bool out_a_x2testing        = true;  // 20
+  disc bool out_a_zdown            = false; // 21
+  disc bool out_a_gripperclose     = false; // 22
+  disc bool out_a_transfer2pickpos = false; // 23
+  disc bool out_a_transfer2droppos = false; // 24
+  disc bool out_a_vacuum           = false; // 25
+  disc bool out_a_ejectpulse       = false; // 26
+  disc bool out_a_handlingready    = false; // 27
+
+  // DISTRIBUTING + HANDLING:
+
+  // Variables used for the initialization sequence.
+  disc int init_err_sen_idx = -1;          // Index of sensor that caused initialization failure, or -1 if no error.
+  disc int init_err_led_idx = 0;           // Led index for initialization error indication (alternating leds).
+  cont t der 1.0;                          // Timer.
+
+  // Wait a bit for the actuators to do their job, and reach a stable state.
+  location init0:
+    initial;
+
+    edge when t >= 2.0 goto init1;
+
+  // Need to move manipulator (x-axis) and transfer cylinder to correct initial
+  // positions. They can collide.
+  //
+  // So, move manipulator out of the way, make it stop at a known position,
+  // then move it back to the initial position, so that we are at the initial
+  // position, approached from the correct side.
+  //
+  // When manipulator out of the way, move cylinder to extreme most position
+  // (on distributing side, not testing side, as that is different station,
+  // which we don't control here), and then back to the desired half-way
+  // position.
+
+  // Move manipulator out of the way, and stop at known position. Position 3
+  // is not far enough away from the cylinder (cables still collide).
+  location init1:
+    edge do out_a_x2testing := false goto init2;
+
+  location init2:
+    edge when s_xpos_at1 or s_xpos_at2 do out_a_x2testing := true goto init3;
+
+  // With manipulator out of the way, move cylinder to extreme most position.
+  // Use distributing side position, not testing side position, as testing side
+  // position is too close to the testing station, which is  controlled by a
+  // different controller.
+  location init3:
+    edge do out_a_transfer2pickpos := true goto init4;
+
+  location init4:
+    edge when s_transfer_atpickup do out_a_transfer2pickpos := false goto init5;
+
+  // Move cylinder to desired initial half-way position.
+  location init5:
+    edge do out_a_transfer2droppos := true goto init6;
+
+  location init6:
+    edge when s_transfer_athalfway do out_a_transfer2droppos := false goto init7;
+
+  // Move manipulator to desired initial position.
+  location init7:
+    edge do out_a_x2distributing := false goto init8;
+
+  location init8:
+    edge when s_xpos_atdrop do out_a_x2distributing := true, t := 0.0 goto init9;
+
+  // Wait a bit for manipulator to stop in a stable manner (stable pressure),
+  // in case the controller immediately disables both actuators.
+  location init9:
+    edge when t >= 1 goto init_sensor_check;
+
+  // Check all sensors, to see whether initialization succeeded.
+  location init_sensor_check:
+    // DISTRIBUTING:
+    edge when     s_Dstartbutton       do init_err_sen_idx :=  0 goto init_error;
+    edge when not s_Dstopbutton        do init_err_sen_idx :=  1 goto init_error;
+    edge when     s_Dautoswitch        do init_err_sen_idx :=  2 goto init_error;
+    edge when     s_Dresetbutton       do init_err_sen_idx :=  3 goto init_error;
+
+    edge when     s_Din4               do init_err_sen_idx :=  4 goto init_error;
+    edge when     s_Din5               do init_err_sen_idx :=  5 goto init_error;
+    edge when     s_Din6               do init_err_sen_idx :=  6 goto init_error;
+    edge when     s_Din7               do init_err_sen_idx :=  7 goto init_error;
+
+    edge when not s_pusher1_in         do init_err_sen_idx :=  8 goto init_error;
+    edge when     s_pusher1_out        do init_err_sen_idx :=  9 goto init_error;
+    edge when not s_stack1filled       do init_err_sen_idx := 10 goto init_error;
+    edge when     s_product1           do init_err_sen_idx := 11 goto init_error;
+    edge when not s_pusher2_in         do init_err_sen_idx := 12 goto init_error;
+    edge when     s_pusher2_out        do init_err_sen_idx := 13 goto init_error;
+    edge when not s_stack2filled       do init_err_sen_idx := 14 goto init_error;
+    edge when     s_product2           do init_err_sen_idx := 15 goto init_error;
+    edge when not s_pusher3_in         do init_err_sen_idx := 16 goto init_error;
+    edge when     s_pusher3_out        do init_err_sen_idx := 17 goto init_error;
+    edge when not s_stack3filled       do init_err_sen_idx := 18 goto init_error;
+    edge when     s_product3           do init_err_sen_idx := 19 goto init_error;
+
+    // s_handlingbusy may have any value initially.
+    // s_Dinitialized is defined by the hardware mapping.
+
+    // HANDLING:
+    edge when     s_Hstartbutton       do init_err_sen_idx := 22 goto init_error;
+    edge when not s_Hstopbutton        do init_err_sen_idx := 23 goto init_error;
+    edge when     s_Hautoswitch        do init_err_sen_idx := 24 goto init_error;
+    edge when     s_Hresetbutton       do init_err_sen_idx := 25 goto init_error;
+
+    edge when     s_Hin4               do init_err_sen_idx := 26 goto init_error;
+    edge when     s_Hin5               do init_err_sen_idx := 27 goto init_error;
+    edge when     s_Hin6               do init_err_sen_idx := 28 goto init_error;
+    edge when     s_Hin7               do init_err_sen_idx := 29 goto init_error;
+
+    edge when     s_xpos_at1           do init_err_sen_idx := 33 goto init_error;
+    edge when     s_xpos_at2           do init_err_sen_idx := 34 goto init_error;
+    edge when     s_xpos_at3           do init_err_sen_idx := 35 goto init_error;
+    edge when not s_xpos_atdrop        do init_err_sen_idx := 36 goto init_error;
+    edge when not s_zpos_atup          do init_err_sen_idx := 37 goto init_error;
+    edge when     s_zpos_atdown        do init_err_sen_idx := 38 goto init_error;
+    edge when     s_gripper            do init_err_sen_idx := 39 goto init_error;
+    edge when     s_transfer_atpickup  do init_err_sen_idx := 40 goto init_error;
+    edge when     s_transfer_atdrop    do init_err_sen_idx := 41 goto init_error;
+    edge when not s_transfer_athalfway do init_err_sen_idx := 42 goto init_error;
+    edge when     s_vacuum             do init_err_sen_idx := 43 goto init_error;
+    edge when     s_product4           do init_err_sen_idx := 44 goto init_error;
+
+    // s_testingbusy may have any value initially.
+    // s_Hinitialized is defined by the hardware mapping.
+
+    edge when // DISTRIBUTING:
+              not s_Dstartbutton,
+                  s_Dstopbutton,
+              not s_Dautoswitch,
+              not s_Dresetbutton,
+
+              not s_Din4,
+              not s_Din5,
+              not s_Din6,
+              not s_Din7,
+
+                  s_pusher1_in,
+              not s_pusher1_out,
+                  s_stack1filled,
+              not s_product1,
+                  s_pusher2_in,
+              not s_pusher2_out,
+                  s_stack2filled,
+              not s_product2,
+                  s_pusher3_in,
+              not s_pusher3_out,
+                  s_stack3filled,
+              not s_product3,
+
+              // HANDLING:
+              not s_Hstartbutton,
+                  s_Hstopbutton,
+              not s_Hautoswitch,
+              not s_Hresetbutton,
+
+              not s_Hin4,
+              not s_Hin5,
+              not s_Hin6,
+              not s_Hin7,
+
+              not s_xpos_at1,
+              not s_xpos_at2,
+              not s_xpos_at3,
+                  s_xpos_atdrop,
+                  s_zpos_atup,
+              not s_zpos_atdown,
+              not s_gripper,
+              not s_transfer_atpickup,
+              not s_transfer_atdrop,
+                  s_transfer_athalfway,
+              not s_vacuum,
+              not s_product4
+
+         goto init_ok;
+
+  // Initialization failed. Using alternating leds to indicate this to the user.
+  location init_error:
+    edge when t >= 0.5, init_err_led_idx = 0 do t := 0.0, init_err_led_idx := 1, out_a_DledQ1 := true,  out_a_DledQ2 := false, out_a_HledQ1 := true,  out_a_HledQ2 := false;
+    edge when t >= 0.5, init_err_led_idx = 1 do t := 0.0, init_err_led_idx := 0, out_a_DledQ1 := false, out_a_DledQ2 := true,  out_a_HledQ1 := false, out_a_HledQ2 := true;
+
+  // Initialization succeeded. Leds are on during initialization. Turn them back off.
+  location init_ok:
+    edge do out_a_DledQ1 := false,  out_a_DledQ2 := false, out_a_HledQ1 := false,  out_a_HledQ2 := false goto initialized;
+
+  // Initialized. Changes to requested output values are copied to the actual outputs (mapping to hardware).
+  location initialized:
+    // DISTRIBUTING:
+    edge when out_a_Dstartled        != a_Dstartled        do out_a_Dstartled        := a_Dstartled;
+    edge when out_a_Dresetled        != a_Dresetled        do out_a_Dresetled        := a_Dresetled;
+    edge when out_a_DledQ1           != a_DledQ1           do out_a_DledQ1           := a_DledQ1;
+    edge when out_a_DledQ2           != a_DledQ2           do out_a_DledQ2           := a_DledQ2;
+
+    edge when out_a_Dout4            != a_Dout4            do out_a_Dout4            := a_Dout4;
+    edge when out_a_Dout5            != a_Dout5            do out_a_Dout5            := a_Dout5;
+    edge when out_a_Dout6            != a_Dout6            do out_a_Dout6            := a_Dout6;
+    edge when out_a_Dout7            != a_Dout7            do out_a_Dout7            := a_Dout7;
+
+    edge when out_a_pusher1          != a_pusher1          do out_a_pusher1          := a_pusher1;
+    edge when out_a_pusher2          != a_pusher2          do out_a_pusher2          := a_pusher2;
+    edge when out_a_pusher3          != a_pusher3          do out_a_pusher3          := a_pusher3;
+
+    // HANDLING:
+    edge when out_a_Hstartled        != a_Hstartled        do out_a_Hstartled        := a_Hstartled;
+    edge when out_a_Hresetled        != a_Hresetled        do out_a_Hresetled        := a_Hresetled;
+    edge when out_a_HledQ1           != a_HledQ1           do out_a_HledQ1           := a_HledQ1;
+    edge when out_a_HledQ2           != a_HledQ2           do out_a_HledQ2           := a_HledQ2;
+
+    edge when out_a_Hout4            != a_Hout4            do out_a_Hout4            := a_Hout4;
+    edge when out_a_Hout5            != a_Hout5            do out_a_Hout5            := a_Hout5;
+    edge when out_a_Hout6            != a_Hout6            do out_a_Hout6            := a_Hout6;
+    edge when out_a_Hout7            != a_Hout7            do out_a_Hout7            := a_Hout7;
+
+    edge when out_a_x2distributing   != a_x2distributing   do out_a_x2distributing   := a_x2distributing;
+    edge when out_a_x2testing        != a_x2testing        do out_a_x2testing        := a_x2testing;
+    edge when out_a_zdown            != a_zdown            do out_a_zdown            := a_zdown;
+    edge when out_a_gripperclose     != a_gripperclose     do out_a_gripperclose     := a_gripperclose;
+    edge when out_a_transfer2pickpos != a_transfer2pickpos do out_a_transfer2pickpos := a_transfer2pickpos;
+    edge when out_a_transfer2droppos != a_transfer2droppos do out_a_transfer2droppos := a_transfer2droppos;
+    edge when out_a_vacuum           != a_vacuum           do out_a_vacuum           := a_vacuum;
+    edge when out_a_ejectpulse       != a_ejectpulse       do out_a_ejectpulse       := a_ejectpulse;
+    edge when out_a_handlingready    != a_handlingready    do out_a_handlingready    := a_handlingready;
+end

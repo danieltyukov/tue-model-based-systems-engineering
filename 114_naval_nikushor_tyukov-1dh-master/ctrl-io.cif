@@ -1,0 +1,71 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Import of sensors and definition of actuators for the controller
+
+import "ctrl.cif";
+
+// INPUTS
+// Distributing station
+input bool s_Dstartbutton;
+input bool s_Dstopbutton;
+input bool s_Dresetbutton;
+input bool s_Dautoswitch;
+
+input bool s_pusher1_in;
+input bool s_pusher1_out;
+input bool s_stack1filled;
+input bool s_product1;
+input bool s_pusher2_in;
+input bool s_pusher2_out;
+input bool s_stack2filled;
+input bool s_product2;
+input bool s_pusher3_in;
+input bool s_pusher3_out;
+input bool s_stack3filled;
+input bool s_product3;
+input bool s_handlingbusy;
+
+input bool s_Dinitialized;
+
+// Handling station
+input bool s_xpos_at1;
+input bool s_xpos_at2;
+input bool s_xpos_at3;
+input bool s_xpos_atdrop;
+input bool s_zpos_atup;
+input bool s_zpos_atdown;
+input bool s_gripper;
+input bool s_transfer_atpickup;
+input bool s_transfer_atdrop;
+input bool s_transfer_athalfway;
+input bool s_vacuum;
+input bool s_product4;
+input bool s_testingbusy;
+
+input bool s_Hinitialized;
+
+// OUTPUTS
+// Distributing station
+alg bool a_Dstartled        = startup.a_Dstartled;
+alg bool a_Dresetled        = false;
+alg bool a_DledQ1           = false;
+alg bool a_DledQ2           = false;
+
+alg bool a_pusher1          = pusher1ctrl.a_pusher;
+alg bool a_pusher2          = pusher2ctrl.a_pusher;
+alg bool a_pusher3          = pusher3ctrl.a_pusher;
+
+// Handling station
+alg bool a_x2distributing   = roboarm.a_x2distributing;
+alg bool a_x2testing        = roboarm.a_x2testing;
+alg bool a_zdown            = roboarm.a_zdown;
+alg bool a_gripperclose     = roboarm.a_gripper;
+
+alg bool a_transfer2pickpos = lever.a_transfer2pickpos;
+alg bool a_transfer2droppos = lever.a_transfer2droppos;
+alg bool a_vacuum           = lever.a_vacuum;
+alg bool a_ejectpulse       = lever.a_ejectpulse;
+alg bool a_handlingready    = false;

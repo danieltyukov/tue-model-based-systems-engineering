@@ -1,0 +1,14 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Use this template to generate PLC code (open XML format)
+
+from "lib:cif" import *;
+
+// Merge controller and the hardware map.
+cifmerge("ctrl.cif", "lib/hw.cif");
+
+// Generated open XML based PLC code from the merged CIF model.
+cif2plc("merged.cif", "-o plc.xml", "-t plc-open-xml");

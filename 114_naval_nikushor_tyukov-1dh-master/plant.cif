@@ -1,0 +1,613 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+// Plant model
+
+import "plant-io.cif";
+import "plant-svg.cif";
+import "plant-usecases.cif";
+
+// Definition of the products that can be used
+enum prod_color         = NO_COL, RED, GREY, BLACK;
+type product            = prod_color;
+const product NO_PROD   = NO_COL;  // default: no product
+const int MAX_BUFFER_SIZE = 5;
+const real X_BLOCK_TARGET = 12.5;
+
+// Constants for the crane arm
+const real X_CLAW_OPEN = 0.0;
+const real X_CLAW_CLOSED = 1.6;
+const real Y_ARM_UP = 0.0;
+const real Y_ARM_DOWN = 68.0;
+
+const real X_CRANE_POS1 = -135;
+const real X_CRANE_POS2 = -90 ;
+const real X_CRANE_POS3 = -46.5 ;
+
+const real VX_CRANE = 35.0;
+const real V_CLAW = 20.0;
+const real V_ARM = 60.0;
+
+// Constants for the transfer lever
+const real MIN_ANGLE = 0;
+const real HALF_ANGLE = 90;
+const real MAX_ANGLE = 180;
+const real VANGLE_LEVER = 45;
+const real LEVER_LENGTH = 220.66544 - 168.32294;
+
+// Events that can be triggered by the user
+// by pressing a button on the UI panel
+uncontrollable  u_press_Dstart;
+uncontrollable  u_press_Dstop;
+uncontrollable  u_press_Dreset;
+
+svgin id "s_Dstartbutton"   event u_press_Dstart;
+svgin id "s_Dstopbutton"    event u_press_Dstop;
+svgin id "s_Dresetbutton"   event u_press_Dreset;
+
+uncontrollable  u_press_Dautoswitch;
+svgin id "s_Dautoswitch"    event u_press_Dautoswitch;
+
+uncontrollable  u_press_stesting;
+svgin id "s_testingbusy"    event u_press_stesting;
+
+// Channels that are triggered by the use case
+// that mimic pressing of a button on the UI panel
+// A use case does a send and a button automaton does a corresponding receive
+event void UC_press_Dstart, UC_press_Dstop;
+
+// Start either user input, use case 1 or use case 2,
+// by pressing the appropriate button in the input selection panel
+uncontrollable  u_start_UC1;
+uncontrollable  u_start_UC2;
+uncontrollable  u_start_UC3;
+svgin id "use_case_1"   event u_start_UC1;
+svgin id "use_case_2"   event u_start_UC2;
+svgin id "use_case_3"   event u_start_UC3;
+
+// Channel to indicate end of use case
+event void UC_done;
+
+// Generate grey or red product, by clicking on the product in the SVG visualization.
+uncontrollable u_prod_grey;
+uncontrollable u_prod_red;
+uncontrollable u_prod_grey_2;
+
+uncontrollable u_prods_grey;
+uncontrollable u_prods_red;
+uncontrollable u_prods_grey_2;
+
+uncontrollable u_r_prod_grey;
+uncontrollable u_r_prod_red;
+uncontrollable u_r_prod_grey_2;
+
+svgin id "prod_grey"    event u_prod_grey;
+svgin id "prod_red"     event u_prod_red;
+svgin id "prod_grey_2"   event u_prod_grey_2;
+
+svgin id "prods_grey"    event u_prods_grey;
+svgin id "prods_red"     event u_prods_red;
+svgin id "prods_grey_2"   event u_prods_grey_2;
+
+svgin id "r_prod_grey"    event u_r_prod_grey;
+svgin id "r_prod_red"     event u_r_prod_red;
+svgin id "r_prod_grey_2"   event u_r_prod_grey_2;
+
+// Clickable sensors
+uncontrollable u_press_xpos2;
+uncontrollable u_press_xpos3;
+
+svgin id "s_xpos_at2" event u_press_xpos2;
+svgin id "s_xpos_at3" event u_press_xpos3;
+
+// Generate product via use case
+event void UC_fill1, UC_fill2, UC_fill3;
+
+// Drop the product
+event void UC_drop2_1, UC_drop2_2, UC_drop2_3;
+
+// Models of a button.
+group button_defs:
+    // Pressing a button via the UI only.
+    automaton def UI_only(uncontrollable u_press):
+        event release;
+        cont t der 1;
+
+        location off:
+            initial;
+            edge u_press    do t := 0       goto on; // user button press
+
+        location on:
+            edge release    when 0.5 <= t   goto off; // release after 0.5 seconds
+            edge u_press;
+    end
+    // Pressing a button via the UI or a use case.
+    automaton def UI_and_UC(uncontrollable u_press; event void UC_press?):
+        event release;
+        cont t der 1;
+
+        location off:
+            initial;
+            edge u_press    do t := 0       goto on; // user button press
+            edge UC_press?  do t := 0       goto on; // use case button press
+
+        location on:
+            edge release    when 0.5 <= t   goto off; // release after 0.5 seconds
+            edge u_press;
+            edge UC_press?;
+    end
+end
+
+// Buttons that can be pressed by the operator or use cases
+group operator:
+    alg bool s_Dstartbutton = Dstart_button.on;
+    alg bool s_Dstopbutton  = Dstop_button.on;
+    alg bool s_Dresetbutton = Dreset_button.on;
+
+
+    Dstart_button : button_defs.UI_and_UC(u_press_Dstart, UC_press_Dstart);
+    Dstop_button  : button_defs.UI_and_UC(u_press_Dstop,  UC_press_Dstop);
+    Dreset_button : button_defs.UI_only(u_press_Dreset);
+end
+
+event void remove_first1;
+event void remove_first2;
+event void remove_first3;
+
+// Buffer Automaton Definition with Print Statements
+group buffers:
+    automaton def Buffer(uncontrollable u_add; uncontrollable u_fill; uncontrollable u_clean;
+                         event void remove_first; alg product buffer_color; alg string buffer_name;
+                         alg bool pusher_endcyc; alg bool product_crane_arm; alg bool product_idle;
+                         event void UC_fill?):
+
+        disc list product products = [];
+        disc int pusher_counter = 0;
+
+        // Sensor signals
+        alg bool s_stackfilled = (size(products) > 0);
+        alg bool s_product = (size(products) > 0);
+
+        location on:
+            initial;
+                // Add one product
+                edge u_add when size(products) < MAX_BUFFER_SIZE do
+                    products := products + [buffer_color];
+
+                // Fill the buffer
+                edge u_fill when size(products) < MAX_BUFFER_SIZE do
+                    products := products + [buffer_color, buffer_color, buffer_color,
+                                            buffer_color, buffer_color][0:(MAX_BUFFER_SIZE - size(products))];
+                edge UC_fill? when size(products) < MAX_BUFFER_SIZE do
+                    products := products + [buffer_color, buffer_color, buffer_color,
+                                            buffer_color, buffer_color][0:(MAX_BUFFER_SIZE - size(products))];
+
+
+                // Clean the buffer
+                edge u_clean do
+                    products := [];
+
+                // Remove the first product via channel communication
+                edge remove_first? when size(products) > 0 do
+                     products := products[1:], pusher_counter:= 1;
+                edge when pusher_counter > 0 and pusher_endcyc do pusher_counter:= 0;
+                edge when size(products) > 0 and product_crane_arm and (a_DledQ1 or not a_gripperclose) do
+                     products := products[1:], pusher_counter:= 1 goto off;
+                edge UC_drop2_1? when size(products) > 0 and product_crane_arm do products := products[1:], pusher_counter:= 1 goto off;
+
+        location off:
+                edge when product_idle goto on;
+
+        // Print Statements
+        // When a product is added
+        print fmt("Product added to %s, new size: %s", buffer_name, products) for u_add;
+
+        // When the buffer is filled
+        print fmt("Buffer %s filled, new size: %s", buffer_name, products) for u_fill;
+
+        // When the buffer is cleaned
+        print fmt("Buffer %s cleaned, new size: %s", buffer_name, products) for u_clean;
+
+        // When the first product is removed
+        print fmt("Product removed from %s, new size: %s", buffer_name, products) for remove_first;
+    end
+end
+
+// Instantiate Buffers with Buffer Names
+buffer1: buffers.Buffer(u_prod_red, u_prods_red, u_r_prod_red, remove_first1, RED, "Buffer 1",
+                        pusher1.moving_in, product1_pos.crane_arm, product1_pos.idle, UC_fill1);
+buffer2: buffers.Buffer(u_prod_grey, u_prods_grey, u_r_prod_grey, remove_first2, GREY, "Buffer 2",
+                        pusher2.moving_in, product2_pos.crane_arm, product2_pos.idle, UC_fill2);
+buffer3: buffers.Buffer(u_prod_grey_2, u_prods_grey_2, u_r_prod_grey_2, remove_first3, GREY, "Buffer 3",
+                        pusher3.moving_in, product3_pos.crane_arm, product3_pos.idle, UC_fill3);
+
+// Model for selecting an input mode (use cases)
+automaton input_mode:
+    monitor u_start_UC1, u_start_UC2, u_start_UC3;
+
+    location user_input:
+        initial;
+        edge u_start_UC1    goto UC1;
+        edge u_start_UC2    goto UC2;
+        edge u_start_UC3    goto UC3;
+
+    location UC1:
+        edge UC_done?       goto user_input;
+
+    location UC2:
+        edge UC_done?       goto user_input;
+
+    location UC3:
+        edge UC_done?       goto user_input;
+end
+
+// Model for pushers
+group pushers:
+    automaton def Pusher(alg bool a_pusher; alg int pusher_counter):
+        cont x_pusher = 0.0;
+        cont y_block = 0.0;
+        cont x_block = 0.0;
+
+        const real V_PUSHER = 37.0;
+        const real V_BLOCK_DOWN = 40.0;
+        const real V_BLOCK_X = 37.0;
+
+        const real X_MIN = -12.5;
+        const real X_MAX = 0.0;
+        const real Y_DOWN = 6.0;
+        const real X_BLOCK_TARGET = 12.5;
+
+        alg bool s_pusher_in = (x_pusher >= 0.0);
+        alg bool s_pusher_out = (x_pusher <= -12.5);
+
+
+        location at_start:
+            initial;
+            equation x_pusher' = 0.0;
+            equation y_block' = 0.0;
+            equation x_block' = 0.0;
+            edge when a_pusher goto moving_out;
+            edge when pusher_counter = 1 and y_block != 0 do y_block:= 0;
+
+        location moving_out:
+            equation x_pusher' = -V_PUSHER;
+            equation y_block' = 0.0;
+            equation x_block' = 0.0;
+            edge when x_pusher <= X_MIN goto at_end;
+            edge when not a_pusher goto moving_in;
+
+        location at_end:
+            equation x_pusher' = 0.0;
+            equation y_block' = if (size(buffer1.products) >= 1 or size(buffer2.products) >= 1 or size(buffer3.products) >= 1): V_BLOCK_DOWN else 0.0 end;
+            equation x_block' = 0.0;
+            edge when y_block >= Y_DOWN goto block_down;
+            edge when not a_pusher goto moving_in;
+
+        location block_down:
+            equation x_pusher' = 0.0;
+            equation y_block' = 0.0;
+            equation x_block' = 0.0;
+            edge when not a_pusher goto moving_in;
+
+        location moving_in:
+            equation x_pusher' = V_PUSHER;
+            equation y_block' = 0.0;
+            equation x_block' = if  (size(buffer1.products) >= 1 or size(buffer2.products) >= 1 or size(buffer3.products) >= 1): V_BLOCK_X else 0.0 end;
+            edge when x_pusher >= X_MAX goto at_start;
+            edge when a_pusher goto moving_out;
+    end
+end
+
+// Instantiate pushers
+pusher1: pushers.Pusher(a_pusher1, buffer1.pusher_counter);
+pusher2: pushers.Pusher(a_pusher2, buffer2.pusher_counter);
+pusher3: pushers.Pusher(a_pusher3, buffer3.pusher_counter);
+
+
+group cranes:
+    automaton def CraneArm():
+
+    event grab, release;
+
+        cont x_claw_offset = X_CLAW_OPEN;
+        cont y_arm_offset = Y_ARM_UP;
+        cont x_crane = 0;
+
+        disc bool grab1, grab2, grab3;
+
+        alg bool s_gripper = claw_closed and
+                 (product1_pos.crane_arm or product2_pos.crane_arm or product3_pos.crane_arm);
+        alg bool claw_closed = (x_claw_offset >= X_CLAW_CLOSED) ;
+        alg bool s_zpos_atdown = (y_arm_offset >= Y_ARM_DOWN);
+        alg bool s_zpos_atup = (y_arm_offset <= Y_ARM_UP);
+
+        alg bool s_handlingbusy = claw_closed and (s_product1 or s_product2 or s_product3);
+
+        alg bool s_xpos_at1 = (x_crane <= X_CRANE_POS1 + 0.25) and (x_crane >= X_CRANE_POS1 - 0.25);
+        alg bool s_xpos_at2 = (x_crane <= X_CRANE_POS2 + 0.4) and (x_crane >= X_CRANE_POS2 - 0.4);
+        alg bool s_xpos_at3 = (x_crane <= X_CRANE_POS3 + 0.4) and (x_crane >= X_CRANE_POS3 - 0.4);
+        alg bool s_xpos_atdrop = x_crane >= -0.01;
+
+
+        alg bool s_product4 = (
+                                (
+                                    (
+                                        (product1_pos.x_product >= X_BLOCK_TARGET + abs(X_CRANE_POS1) - 0.5) and
+                                        (product1_pos.x_product <= X_BLOCK_TARGET + abs(X_CRANE_POS1) + 0.5)
+                                                                                                                    )
+                                 and (product1_pos.y_product >= 5.95 and product1_pos.y_product <= 6.05)
+                                                                                                                  )
+                               or
+                                (
+                                    (
+                                        (product2_pos.x_product >= X_BLOCK_TARGET + abs(X_CRANE_POS2) - 0.5) and
+                                        (product2_pos.x_product <= X_BLOCK_TARGET + abs(X_CRANE_POS2) + 0.5)
+                                                                                                                    )
+                                 and (product2_pos.y_product >= 5.95 and product1_pos.y_product <= 6.05)
+                                                                                                                  )
+                               or
+
+                                (
+                                    (
+                                        (product3_pos.x_product >= X_BLOCK_TARGET + abs(X_CRANE_POS3) - 0.5) and
+                                        (product3_pos.x_product <= X_BLOCK_TARGET + abs(X_CRANE_POS3) + 0.5)
+                                                                                                                    )
+                                 and (product3_pos.y_product >= 5.95 and product3_pos.y_product <= 6.05)
+                                                                                                                  )
+                                                                                                                );
+                                // and not claw_closed;
+                               //and lever1.vacuum_counter = 0;
+
+        location free:
+            initial;
+            equation x_claw_offset' =
+                    if a_gripperclose and x_claw_offset < X_CLAW_CLOSED      : V_CLAW
+                    elif not a_gripperclose and x_claw_offset > X_CLAW_OPEN  : -V_CLAW
+                    else 0
+                    end;
+
+            equation y_arm_offset' =
+                    if a_zdown and y_arm_offset < Y_ARM_DOWN: V_ARM
+                    elif not a_zdown and y_arm_offset > Y_ARM_UP: -V_ARM
+                    else 0
+                    end;
+
+           equation x_crane' =
+                  if a_x2distributing :
+                        if x_crane >= X_CRANE_POS1 and not a_x2testing       : -VX_CRANE
+                        else                          0
+                        end
+                   elif  a_x2testing :
+                        if  x_crane <= 0 and not a_x2distributing            : VX_CRANE
+                        else                          0
+                        end
+                   else 0
+                   end;
+
+          edge grab when (s_xpos_at1 and s_product1) and s_zpos_atdown and claw_closed
+                    do grab1 := true goto busy;
+          edge grab when (s_xpos_at2 and s_product2) and s_zpos_atdown and claw_closed
+                    do grab2 := true goto busy;
+          edge grab when (s_xpos_at3 and s_product3) and s_zpos_atdown and claw_closed
+                    do grab3 := true goto busy;
+          edge u_press_xpos2 do x_crane:= X_CRANE_POS2;
+          edge u_press_xpos3 do x_crane:= X_CRANE_POS3 + 0.25;
+
+
+          location busy:
+
+          equation x_claw_offset' =
+                    if a_gripperclose and x_claw_offset < X_CLAW_CLOSED      : V_CLAW
+                    elif not a_gripperclose and x_claw_offset > X_CLAW_OPEN  : -V_CLAW
+                    else 0
+                    end;
+
+            equation y_arm_offset' =
+
+                    if a_zdown and y_arm_offset < Y_ARM_DOWN: V_ARM
+                    elif not a_zdown and y_arm_offset > Y_ARM_UP: -V_ARM
+                    else 0
+                    end;
+
+
+
+           equation x_crane' =
+
+                  if a_x2distributing :
+                        if x_crane >= X_CRANE_POS1 and not a_x2testing       : -VX_CRANE
+                        else                          0
+                        end
+
+                   elif  a_x2testing :
+                        if  x_crane <= 0 and not a_x2distributing            : VX_CRANE
+                        else                          0
+                        end
+                   else 0
+                   end;
+
+        edge release when not claw_closed or a_DledQ1 do (grab1, grab2, grab3) := (false, false, false) goto free;
+        edge UC_drop2_2? do (grab1, grab2, grab3) := (false, false, false) goto free;
+        edge u_press_xpos2 do x_crane:= X_CRANE_POS2;
+        edge u_press_xpos3 do x_crane:= X_CRANE_POS3;
+
+
+
+    end
+end
+
+crane1: cranes.CraneArm();
+
+
+
+
+automaton def ProductPos(alg real dx_pusher, dy_pusher;
+                         alg bool a_pusher, crane_grab;
+                         alg real x_right, x_left;
+                         event void remove_first!):
+
+    event pusher_active, product_ready, claw_closed, prod_release, vacuumed;
+
+    cont angle = HALF_ANGLE der lever1.d_angle;
+    cont x_product;
+    cont y_product;
+    disc bool product_grabbed;
+
+    alg bool s_product = (x_product >= X_BLOCK_TARGET - 0.1) and (x_product <= X_BLOCK_TARGET + 0.1)
+                         and not (y_product < 0);
+
+    location idle:
+        initial;
+
+        equation x_product'= 0;
+        equation y_product'= 0;
+
+        edge pusher_active when a_pusher and  (size(buffer1.products) >= 1 or size(buffer2.products) >= 1 or size(buffer3.products) >= 1) goto pusher;
+
+    location pusher:
+
+        equation x_product' = dx_pusher;
+        equation y_product' = dy_pusher;
+
+        edge product_ready when x_product >= X_BLOCK_TARGET goto at_buffer;
+
+    location at_buffer:
+
+       equation x_product' = 0;
+       equation y_product' = 0;
+
+        edge claw_closed when crane_grab do product_grabbed := true goto crane_arm;
+
+    location crane_arm:
+
+        equation x_product' =
+             if crane1.claw_closed and a_x2testing and not a_x2distributing:
+                if crane_grab and x_product <= x_right + X_BLOCK_TARGET: VX_CRANE
+                else 0
+                end
+             elif crane1.claw_closed and a_x2distributing and not a_x2testing:
+                if crane_grab and x_product >= x_left + X_BLOCK_TARGET: -VX_CRANE
+                else 0
+                end
+             else 0
+             end;
+
+        equation y_product' =
+             if not a_zdown and crane1.y_arm_offset > Y_ARM_UP: - V_ARM
+             elif a_zdown and crane1.y_arm_offset < Y_ARM_DOWN: V_ARM
+             else 0
+             end;
+
+        edge prod_release when product_grabbed
+                               and (
+                                     (
+                                        (x_product >= X_BLOCK_TARGET + x_right - 0.5) and
+                                        (x_product <= X_BLOCK_TARGET + x_right + 0.5)
+                                                                                                                    )
+                                        and (y_product >= 5.95 and product1_pos.y_product <= 6.05)
+                                                                                                                  )
+                                 goto at_s_prod4;
+
+        edge when a_DledQ1 or not a_gripperclose do product_grabbed:= false, (x_product, y_product) := (0,0) goto idle;
+        edge UC_drop2_3? do product_grabbed:= false, (x_product, y_product) := (0,0) goto idle;
+
+location at_s_prod4:
+
+        equation x_product' = 0;
+        equation y_product' = 0;
+        edge vacuumed   when a_vacuum goto transfer_lever;
+
+
+
+location transfer_lever:
+
+
+    equation x_product' = if lever1.vacuum_counter = 1: sin(angle*3.14/180)*LEVER_LENGTH*3.14/180*lever1.d_angle
+                          else 0
+                               end;
+
+    equation y_product' = if lever1.vacuum_counter = 1: -cos(angle*3.14/180)*LEVER_LENGTH*3.14/180*lever1.d_angle
+                          else 0
+                              end;
+
+    edge remove_first! when s_transfer_atdrop and a_ejectpulse
+               do product_grabbed := false, (x_product, y_product) := (0,0) goto idle;
+
+end
+
+
+product1_pos : ProductPos(pusher1.x_block', pusher1.y_block', a_pusher1, crane1.grab1,
+                          abs(X_CRANE_POS1), 0, remove_first1);
+product2_pos : ProductPos(pusher2.x_block', pusher2.y_block', a_pusher2, crane1.grab2,
+                          abs(X_CRANE_POS2), -45, remove_first2);
+product3_pos : ProductPos(pusher3.x_block', pusher3.y_block', a_pusher3, crane1.grab3,
+                          abs(X_CRANE_POS3), -90, remove_first3);
+
+
+group levers:
+    automaton def TransferLever():
+
+    event vacuum, release;
+
+
+
+
+          alg real d_angle = if a_transfer2pickpos and angle >= MIN_ANGLE and not a_transfer2droppos: -VANGLE_LEVER
+               elif a_transfer2droppos and angle <= MAX_ANGLE and not a_transfer2pickpos: VANGLE_LEVER
+                else 0
+                end;
+          cont angle = HALF_ANGLE der d_angle;
+
+
+    alg bool s_transfer_atpickup = (angle >= MIN_ANGLE -1 and angle <= MIN_ANGLE +1);
+    alg bool s_transfer_athalfway = (angle >= HALF_ANGLE -1 and angle <= HALF_ANGLE +1);
+    alg bool s_transfer_atdrop = (angle >= MAX_ANGLE -1 and angle <= MAX_ANGLE + 1);
+    alg bool s_vacuum = a_vacuum;
+
+    disc int vacuum_counter = 0;
+
+
+    alg real dx_levertip = LEVER_LENGTH -cos(angle*3.14/180)*LEVER_LENGTH;
+    alg real dy_levertip = -sin(angle*3.14/180)*LEVER_LENGTH;
+
+    location free:
+        initial;
+
+        edge vacuum when a_vacuum and not a_ejectpulse and (s_transfer_atdrop or s_transfer_atpickup) do vacuum_counter:= 1 goto busy;
+
+    location busy:
+
+        edge release when a_ejectpulse do vacuum_counter:= 0 goto free;
+
+     end
+end
+
+
+
+lever1: levers.TransferLever();
+
+automaton TestingSwitch:
+
+alg bool s_testingbusy = busy;
+
+location free:
+initial;
+edge u_press_stesting goto busy;
+
+location busy:
+edge u_press_stesting goto free;
+
+end
+
+automaton AutoSwitch:
+
+alg bool s_Dautoswitch = Horizontal_Auto;
+
+location Vertical_Manual:
+initial;
+edge u_press_Dautoswitch goto Horizontal_Auto;
+
+location Horizontal_Auto:
+edge u_press_Dautoswitch goto Vertical_Manual;
+
+end

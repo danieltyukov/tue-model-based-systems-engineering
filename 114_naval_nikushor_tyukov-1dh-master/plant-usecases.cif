@@ -1,0 +1,97 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Use cases model
+
+import "plant.cif";
+
+alg bool usecases_inactive = usecase_1.init and usecase_2.init and usecase_3.init;
+
+// Use case 1
+// Press start, spawn product stacks 2 and 3, let controller alternate between 2 3 in a cycle
+
+
+automaton usecase_1:
+    monitor u_start_UC1;
+
+    cont t der 1;
+
+    location init:
+        initial;
+        edge u_start_UC1            when usecases_inactive
+                                    do t := 0                   goto wait_start;
+
+    location wait_start:
+        edge UC_press_Dstart!       when t >= 1   do t:=0       goto wait_prod;
+
+    location wait_prod:
+        edge UC_fill2!             when t >= 0.1  do t:= 0      goto wait_prod2;
+
+    location wait_prod2:
+        edge UC_fill3!             when t >= 0.1  do t:= 0      goto done;
+
+
+    location done:
+        edge UC_done!               when t >= 20                goto init;
+
+end
+
+// Use case 2
+// Press start, spawn all products, let controller alternate between 2 3 1 3 in a cycle
+
+automaton usecase_2:
+    monitor u_start_UC2;
+
+    cont t der 1;
+
+    location init:
+        initial;
+        edge u_start_UC2            when usecases_inactive
+                                    do t := 0                   goto wait_start;
+
+    location wait_start:
+        edge UC_press_Dstart!        when t > 0.5    do t := 0   goto wait_prod;
+
+    location wait_prod:
+        edge UC_fill1!               goto wait_prod2;
+
+    location wait_prod2:
+        edge UC_fill2!               goto wait_prod3;
+
+    location wait_prod3:
+        edge UC_fill3!               goto done;
+
+    location done:
+        edge UC_done!               when t >= 2                 goto init;
+
+end
+
+// Use case 3
+// Press start, spawn all products, then remove a product from arm's claws, watch it react (it is mad)
+
+automaton usecase_3:
+    monitor u_start_UC3;
+
+    cont t der 1;
+
+    location init:
+        initial;
+        edge u_start_UC3          when usecases_inactive   do t:= 0        goto wait_start;
+
+
+    location wait_start:
+        edge UC_press_Dstart!        when t > 0.5    do t := 0   goto fill;
+
+    location fill:
+        edge UC_fill1!            when t>= 1;
+        edge UC_fill2!            when t>= 2;
+        edge UC_fill3!            when t>= 3               do t:= 0        goto drop;
+
+    location drop:
+        edge UC_drop2_1!              when t>=7.5;
+        edge UC_drop2_2!              when t>=7.5000001;
+        edge UC_drop2_3!              when t>=7.5000002                    goto init;
+
+end

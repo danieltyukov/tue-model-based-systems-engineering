@@ -1,0 +1,115 @@
+// Controller to test hardware mapping, for all sensors and actuators.
+
+// INPUTS
+
+// DISTRIBUTING:
+input bool s_Dstartbutton;       // 0
+input bool s_Dstopbutton;        // 1
+input bool s_Dresetbutton;       // 2
+input bool s_Dautoswitch;        // 3
+
+input bool s_Din4;               // 4
+input bool s_Din5;               // 5
+input bool s_Din6;               // 6
+input bool s_Din7;               // 7
+
+input bool s_pusher1_in;         // 8
+input bool s_pusher1_out;        // 9
+input bool s_stack1filled;       // 10
+input bool s_product1;           // 11
+input bool s_pusher2_in;         // 12
+input bool s_pusher2_out;        // 13
+input bool s_stack2filled;       // 14
+input bool s_product2;           // 15
+input bool s_pusher3_in;         // 16
+input bool s_pusher3_out;        // 17
+input bool s_stack3filled;       // 18
+input bool s_product3;           // 19
+input bool s_handlingbusy;       // 20
+
+input bool s_Dinitialized;       // 21
+
+// HANDLING:
+input bool s_Hstartbutton;       // 22
+input bool s_Hstopbutton;        // 23
+input bool s_Hresetbutton;       // 24
+input bool s_Hautoswitch;        // 25
+
+input bool s_Hin4;               // 26
+input bool s_Hin5;               // 27
+input bool s_Hin6;               // 28
+input bool s_Hin7;               // 29
+
+//input bool s_product1;         // 30 (same sensor as for distributing station)
+//input bool s_product2;         // 31 (same sensor as for distributing station)
+//input bool s_product3;         // 32 (same sensor as for distributing station)
+input bool s_xpos_at1;           // 33
+input bool s_xpos_at2;           // 34
+input bool s_xpos_at3;           // 35
+input bool s_xpos_atdrop;        // 36
+input bool s_zpos_atup;          // 37
+input bool s_zpos_atdown;        // 38
+input bool s_gripper;            // 39
+input bool s_transfer_atpickup;  // 40
+input bool s_transfer_atdrop;    // 41
+input bool s_transfer_athalfway; // 42
+input bool s_vacuum;             // 43
+input bool s_product4;           // 44
+input bool s_testingbusy;        // 45
+
+input bool s_Hinitialized;       // 46
+
+// OUTPUTS
+
+// DISTRIBUTING:
+alg bool a_Dstartled        = counter.count = 0;  // 0
+alg bool a_Dresetled        = counter.count = 1;  // 1
+alg bool a_DledQ1           = counter.count = 2;  // 2
+alg bool a_DledQ2           = counter.count = 3;  // 3
+
+alg bool a_Dout4            = counter.count = 4;  // 4
+alg bool a_Dout5            = counter.count = 5;  // 5
+alg bool a_Dout6            = counter.count = 6;  // 6
+alg bool a_Dout7            = counter.count = 7;  // 7
+
+alg bool a_pusher1          = counter.count = 8;  // 8
+alg bool a_pusher2          = counter.count = 9;  // 9
+alg bool a_pusher3          = counter.count = 10; // 10
+
+// HANDLING:
+// Second UI panel may not be used by students, set to false in hw.cif
+// alg bool a_Hstartled        = counter.count = 11; // 11
+// alg bool a_Hresetled        = counter.count = 12; // 12
+// alg bool a_HledQ1           = counter.count = 13; // 13
+// alg bool a_HledQ2           = counter.count = 14; // 14
+
+alg bool a_Hout4            = counter.count = 15; // 15
+alg bool a_Hout5            = counter.count = 16; // 16
+alg bool a_Hout6            = counter.count = 17; // 17
+alg bool a_Hout7            = counter.count = 18; // 18
+
+alg bool a_x2distributing   = counter.count = 19; // 19
+alg bool a_x2testing        = counter.count = 20; // 20
+alg bool a_zdown            = counter.count = 21; // 21
+alg bool a_gripperclose     = counter.count = 22; // 22
+alg bool a_transfer2pickpos = counter.count = 23; // 23
+alg bool a_transfer2droppos = counter.count = 24; // 24
+alg bool a_vacuum           = counter.count = 25; // 25
+alg bool a_ejectpulse       = counter.count = 26; // 26
+alg bool a_handlingready    = counter.count = 27; // 27
+
+
+// Start button push counter.
+automaton counter:
+  disc int count = 0;
+
+  location off:
+    initial;
+    edge
+        when s_Dstartbutton
+        do count := if count = 3: 8 elif count = 10: 19 elif count = 27: 0 else count + 1 end
+                                 goto on;
+
+  location on:
+    edge when not s_Dstartbutton goto off;
+end

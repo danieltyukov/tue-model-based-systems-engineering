@@ -1,0 +1,33 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+
+
+// Execute this file to simulate the plant model in manual mode,
+// allowing you to activate the actuators and to place products.
+// The simulator takes the first of all possible transitions.
+
+from "lib:cif" import *;
+
+//merge files
+cifmerge(
+    "manual.cif",
+    "plant-svg.cif",
+);
+
+//run merged file
+cifsim(
+    "merged.cif",
+    "-i svg",
+    "--stateviz=1",
+    "--speed=1",
+    "-o -state-target",
+    "-a first",
+    "--complete=on",
+    "--distributions-seed=random", // Set random to 7, or any positive integer, to generate repeatable results for debugging
+    "--solver-root-maxchk=0.01",
+    "--solver-int-maxstep=0.1",
+   //"--option-dialog=yes",
+);

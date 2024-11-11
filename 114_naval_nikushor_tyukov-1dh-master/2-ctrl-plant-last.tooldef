@@ -1,0 +1,30 @@
+// Nikushor V.N        1847120
+// Naval    K.N        1855921
+// Tykov    D.T        1819283
+
+
+// Execute this file to simulate the plant with controller
+// The simulator takes the last of all possible transitions.
+
+from "lib:cif" import *;
+
+// merge controller and plant files
+cifmerge(
+    "ctrl.cif",
+    "plant-svg.cif",
+);
+
+// run merged file
+cifsim(
+    "merged.cif",
+    "-i svg",
+    "--stateviz=1",
+    "--speed=1",
+    "-o -state-target",
+    "-a last",
+    "--complete=on",
+    "--distributions-seed=random", // Set random to 7, or any positive integer, to generate repeatable results for debugging
+    "--solver-root-maxchk=0.01",
+    "--solver-int-maxstep=0.1",
+   //"--option-dialog=yes",
+);
