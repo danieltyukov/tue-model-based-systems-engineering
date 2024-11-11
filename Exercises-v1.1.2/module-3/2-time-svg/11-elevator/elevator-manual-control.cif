@@ -1,0 +1,20 @@
+uncontrollable u_close_doors, u_lift_up, u_lift_down;
+
+// Actuators
+alg bool a_close_doors = a_button_close_door.on;
+alg bool a_lift_up     = a_button_lift_up.on;
+alg bool a_lift_down   = a_button_lift_down.on;
+
+a_button_close_door: A_Button(u_close_doors);
+a_button_lift_up   : A_Button(u_lift_up);
+a_button_lift_down : A_Button(u_lift_down);
+
+// Actuator button that can be clicked in the SVG visualization to activate the actuator
+automaton def A_Button(uncontrollable u_press):
+    location off:
+        initial;
+        edge u_press goto on;
+
+    location on:
+         edge u_press goto off;
+end

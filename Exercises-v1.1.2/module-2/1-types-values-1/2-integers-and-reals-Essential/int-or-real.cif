@@ -1,0 +1,6 @@
+const bool k = false;
+const bool l = false;
+
+const bool z = (k and l) or l;
+
+print(k);

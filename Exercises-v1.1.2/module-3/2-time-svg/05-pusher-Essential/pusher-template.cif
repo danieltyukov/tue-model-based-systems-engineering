@@ -1,0 +1,12 @@
+// Boundaries between which the pusher can move
+const real maxx = 4;
+const real minx = 0;
+
+cont x der v;
+// The actuator on results in a speed when between given boundaries
+alg real v =  if       a_pusher and x    <= maxx:  2
+              elif not a_pusher and minx <= x   : -2
+              else 0
+              end;
+
+alg bool a_pusher //...

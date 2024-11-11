@@ -1,0 +1,73 @@
+const real VBELT = 2;  // conv belt velocity
+const real VPUSH = 1;  // pusher velocity
+
+alg bool a_conveyer = a_conveyer_button.on;
+alg bool a_pusher   = a_pusher_button.on;
+
+event void pusher_to_conveyer;
+
+uncontrollable u_conveyer_toggle, u_pusher_toggle;
+
+automaton a_conveyer_button:
+    location off:
+        initial;
+        edge u_conveyer_toggle goto on;
+
+    location on:
+        edge u_conveyer_toggle goto off;
+end
+
+automaton a_pusher_button:
+    location off:
+        initial;
+        edge u_pusher_toggle goto on;
+
+    location on:
+        edge u_pusher_toggle goto off;
+end
+
+automaton pusher:
+    const real MAXY = 3.1;
+    const real MINY = 0;
+
+    event new_product;
+
+    cont y_pusher  der v_pusher;
+    cont y_product der v_product;
+
+    disc bool has_prod = false;
+
+    alg real v_pusher =
+                  if     a_pusher and y_pusher <= MAXY     :  VPUSH
+                elif not a_pusher and MINY     <= y_pusher : -VPUSH
+                else                                          0
+                 end;
+
+    alg real v_product =
+                    // use model coordinates here (not SVG coordinates)
+                  if has_prod and a_pusher and y_product <= y_pusher: v_pusher
+                else                                                  0
+                 end;
+
+    location:
+        initial;
+        // when almost fully extended send product to conveyer
+        // and start with new product
+        edge pusher_to_conveyer ! when has_prod and MAXY - 0.1 <= y_product do y_product := -1, has_prod := false;
+        edge new_product          when not has_prod and y_pusher <= 0.1     do y_product := 0.1, has_prod := true;
+end
+
+automaton conveyer:
+    event exit;
+
+    cont x = -1;                // position of product, if has_prod
+    disc bool has_prod = false; // product has_prod
+
+    // velocity of product on conveyer
+    equation x' = if a_conveyer and has_prod: VBELT else 0 end;
+
+    location:
+        initial;
+        edge pusher_to_conveyer ?  when not has_prod do has_prod := true,  x := 0;
+        edge exit                  when 8 <= x       do has_prod := false, x := -1;
+end

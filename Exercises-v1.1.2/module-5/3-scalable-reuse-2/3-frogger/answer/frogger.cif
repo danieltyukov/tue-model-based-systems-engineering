@@ -1,0 +1,53 @@
+event void hit;
+uncontrollable u_push;
+
+automaton frog:
+    event done;
+    cont y;
+    //The frogs starts/stops when clicked on in the SVG
+    //It becomes flat and stops moving when hit by a car
+    location Waiting:
+        initial;
+        equation y' = 0;
+        edge hit? goto Flat;
+        edge u_push goto Crossing;
+
+    location Crossing:
+        equation y' = 30;
+        edge hit? goto Flat;
+        edge u_push goto Waiting;
+        edge done when y > 250 goto Safe;
+
+    //When it reaches the end, it stops to catch its breath
+    location Safe:
+        equation y'= 0;
+        edge u_push;
+
+    location Flat:
+        equation y' = 0;
+        edge u_push;
+end
+
+//A car is defined by its initial position, end position and speed
+car1: car(0, 50, 420, 120);
+car2: car(40, 90, 280, 75);
+car3: car(80, 130, 250, 50);
+car4: car(170, 170, 220, 80);
+car5: car(100, 210, 320, 100);
+
+automaton def car(alg real x_ini, y_ini, x_end,v):
+    event reset;
+    alg real y = y_ini;
+    cont x = x_ini der v;
+    //Car and frog collide when in the same area
+    alg bool collide = if x>68 and x<120
+                      and y>frog.y+10 and y<frog.y+40: true
+                      else false end;
+
+    location:
+        initial;
+        //At collision, the car flattens the frog via a channel
+        edge hit!  when collide;
+        //When the car reaches the end, it jumps back to the left
+        edge reset when x>x_end do x:=-30;
+end

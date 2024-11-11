@@ -1,0 +1,67 @@
+event start;
+
+automaton car1:
+    event top_speed, finish;
+    cont x der v;  // differential equation for position
+    cont v der a;
+    alg   real a;
+    const real v_max = 80;
+
+    location Waiting:
+        initial;
+        equation a = 0;
+        // Note that this event happens immediately at time=0
+        edge start                     goto Accelerate;
+
+    location Accelerate:
+        // The car accelerates constantly until its max velocity
+        equation a = 10;
+        edge top_speed when v >= v_max goto Drive;
+
+    location Drive:
+        // The car then drives on with constant velocity
+        equation a = 0;
+        edge finish    when x >= 100   goto Finished;
+
+    location Finished:
+        equation a = if v > 0: -1.5 else 0 end;
+
+end
+
+
+automaton car2:
+    event top_speed, finish;
+    cont x der v;
+    cont v der a;
+    alg   real a;
+    const real v_max = 100;
+
+    location Waiting:
+        initial;
+        equation a = 0;
+        edge start                     goto Accelerate;
+
+    location Accelerate:
+        equation a = 8;
+        edge top_speed when v >= v_max goto Drive;
+
+    location Drive:
+        equation a = 0;
+        edge finish    when x >= 100   goto Finished;
+
+    location Finished:
+        equation a = if v > 0: -1.5 else 0 end;
+
+end
+
+automaton ref:
+    event car1win, car2win;
+    disc bool win1, win2;
+
+    location race:
+        initial;
+        edge car1win when car1.x >= 100 and car2.x < 100 do win1 := true goto finish;
+        edge car2win when car2.x >= 100 and car1.x < 100 do win2 := true goto finish;
+
+    location finish;
+end

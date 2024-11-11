@@ -1,0 +1,15 @@
+type priority = int;
+type product = tuple(int nr; priority prio);
+type product_list = list product;
+
+event product g_buf, buf_exit;
+
+func product_list insert(product_list prods; product prod):
+    int i = size(prods) - 1;
+    product_list new_prods = [];
+
+    while true:
+        if size(prods) = 0:
+            return [prod];
+        elif prod[prio] >= prods[i][prio]:
+            new_prods :

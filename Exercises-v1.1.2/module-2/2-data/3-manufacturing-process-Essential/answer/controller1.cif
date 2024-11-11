@@ -1,0 +1,5 @@
+automaton controller1:
+    location:
+        initial;
+        edge start_M1 when B.Empty;
+end

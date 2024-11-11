@@ -1,0 +1,8 @@
+const real SVGfactor = 20;
+
+import  "conveyer.cif";
+svgfile "conveyer.svg";
+
+svgout id "product"  attr "transform" value fmt("translate(%s,0)", x * SVGfactor);
+
+svgout id "conveyer" attr "fill"      value if a_conveyer: "green" else "lightgrey" end;

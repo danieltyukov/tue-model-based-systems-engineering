@@ -1,0 +1,9 @@
+from "lib:cif" import *;             //Imports the library to run CIF 3 files
+
+cifsim(
+   "race.cif",
+   "-i auto",                         // Allow user input
+   "--plotviz=1",                   // Shows the current state in real time
+   "--plotviz-filter=car1.x,car2.x",
+   "-t 30",                         // Sets end time to 15 seconds
+);

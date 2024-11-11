@@ -1,0 +1,27 @@
+automaton long:
+    event a;
+    event b;
+    event c;
+    event d;
+
+    location One:
+        initial;
+        edge a goto Two;
+        edge b goto Two;
+        edge c goto One;
+
+    location Two:
+        edge a goto Two;
+        edge b goto Two;
+        edge c goto Three;
+        edge d goto Four;
+
+    location Three:
+        edge a goto Two;
+        edge d goto Two;
+
+    location Four:
+        edge c goto Four;
+        edge d goto Three;
+
+end

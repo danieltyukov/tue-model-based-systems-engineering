@@ -1,0 +1,35 @@
+automaton dining_philosophers:
+    event p1f1, p1f2, p2f1, p2f2, p1f, p2f;
+
+    location TT:
+        initial;
+        edge p1f1 goto F1T;
+        edge p1f2 goto F2T;
+        edge p2f1 goto TF1;
+        edge p2f2 goto TF2;
+
+    location F1T:
+        edge p1f2 goto ET;
+        edge p2f2 goto F1F2;
+
+    location F2T:
+        edge p1f1 goto ET;
+        edge p2f1 goto F2F1;
+
+    location TF1:
+        edge p1f2 goto F2F1;
+        edge p2f2 goto TE;
+
+    location TF2:
+        edge p1f1 goto F1F2;
+        edge p2f1 goto TE;
+
+    location ET:
+        edge p1f goto TT;
+
+    location TE:
+        edge p2f goto TT;
+
+    location F1F2;
+    location F2F1;
+end

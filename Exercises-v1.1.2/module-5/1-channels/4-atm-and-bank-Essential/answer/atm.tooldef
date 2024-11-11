@@ -1,0 +1,6 @@
+from "lib:cif" import *;
+
+cifsim(
+    "atm.cif",
+    "--stateviz=1",
+);

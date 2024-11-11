@@ -1,0 +1,8 @@
+import "sd2-ctrl.cif";
+
+// INPUTS
+input bool s_motion;
+
+// OUTPUTS
+alg bool a_door_left    = controller.a_door_left;
+alg bool a_door_right   = controller.a_door_right;

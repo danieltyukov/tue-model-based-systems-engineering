@@ -1,0 +1,20 @@
+svgfile "hw.svg";
+
+// Used for actuators that can be clicked in the SVG visualization
+automaton def Button(alg string name):
+    uncontrollable u_press;
+    location off:
+        initial;
+        edge u_press goto on;   // toggle button state after each press
+
+    location on:
+         edge u_press goto off; // toggle button state after each press
+
+    svgin  id name event u_press;
+end
+
+// processing actuators
+alg bool a_heater        = button_heater.on;
+
+//manual buttons
+button_heater:           Button("a_heater");

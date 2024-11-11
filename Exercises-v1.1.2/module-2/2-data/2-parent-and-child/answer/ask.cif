@@ -1,0 +1,24 @@
+event ask, give;
+
+automaton Child:
+    disc string question = "Can I have a cookie?";
+
+    location:
+        initial;
+        // The nagging child keeps asking and adding please
+        edge ask    do question := question + " Please?";
+        // Upon receiving one, the child restarts its begging
+        edge give
+                    do question := "Can I have another cookie?";
+end
+
+automaton Parent:
+    disc int patience = 3;
+
+    location:
+        initial;
+        // After each ask, the parent's patience drops
+        edge ask     when patience > 0 do patience := patience - 1;
+        // When running out of patience, he concedes
+        edge give    when patience <=0 do patience := 3;
+end

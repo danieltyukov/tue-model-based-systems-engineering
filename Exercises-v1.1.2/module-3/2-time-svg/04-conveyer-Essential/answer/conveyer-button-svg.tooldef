@@ -1,0 +1,8 @@
+from "lib:cif" import *;
+
+cifsim(
+    "conveyer-button-svg.cif",
+    "-i svg",
+    "--stateviz=0",
+    "--frame-rate=20",
+);

@@ -1,0 +1,22 @@
+from "lib:cif" import *;
+
+//merge files
+cifmerge(
+    "sd2-ctrl.cif",
+    "sd2-svg.cif",
+);
+
+//run merged file
+cifsim(
+    "merged.cif",
+    "-i svg",
+//     "--env-events=svg",
+//     "--stateviz=1",
+    "-a last",
+    "--speed=1",
+    "-o -state-target",
+    "-a random",
+    "--distributions-seed=7",
+    "--solver-root-maxchk=0.01",
+   //"--option-dialog=yes",
+);

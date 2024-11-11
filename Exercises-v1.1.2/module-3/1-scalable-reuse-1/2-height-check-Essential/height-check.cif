@@ -1,0 +1,5 @@
+const real maxi = 1.9;
+const real mini = 1.5;
+
+const real height = 1.7;
+alg bool healthy = mini <= height and height <= maxi;

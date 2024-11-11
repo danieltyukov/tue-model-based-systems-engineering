@@ -1,0 +1,25 @@
+event generate, turn_on;
+
+automaton G:
+    location Off:
+        initial;
+        edge turn_on goto Generating;
+
+    location Generating:
+        edge generate goto Generating;
+end
+
+automaton M1:
+    event pass, discard;
+
+    location Off:
+        initial;
+        edge turn_on goto Idle;
+
+    location Idle:
+        edge generate goto Examine;
+
+    location Examine:
+        edge pass goto Idle;
+        edge discard goto Idle;
+end

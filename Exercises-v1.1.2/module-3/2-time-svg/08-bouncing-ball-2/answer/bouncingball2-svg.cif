@@ -1,0 +1,5 @@
+import "bouncingball2.cif";
+svgfile "bouncingball2.svg";
+
+svgout id "ball"    attr "cy" value -ball.y*20+350;
+svgout id "ball"    attr "cx" value ball.x*20+100;

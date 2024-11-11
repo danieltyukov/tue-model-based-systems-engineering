@@ -1,0 +1,52 @@
+import "sd2-plant-io.cif";
+
+uncontrollable u_person;
+
+automaton person:
+    event reset;
+
+    const real  X_MIN = 0;
+    const real  X_MAX = 85;
+    const real  V_PERSON = 20;
+
+    cont x = X_MIN;
+
+    location waiting:
+        initial;
+        equation x' = 0;
+        edge u_person                               goto walking;
+
+    location walking:
+        equation x' = V_PERSON;
+        edge u_person;
+        edge reset      when x >= X_MAX do x := 0   goto waiting;
+
+end
+
+group slidingDoorLeft:
+    const real X_MIN  = -45;
+    const real X_MAX  = 0;
+    const real V_DOOR = 30;
+
+    cont x = X_MAX der v;
+
+    alg real v =
+                if          a_door_left and x >= X_MIN: -V_DOOR
+                elif    not a_door_left and x <= X_MAX:  V_DOOR
+                else                                0
+                end;
+end
+
+group slidingDoorRight:
+    const real X_MIN  = 0;
+    const real X_MAX  = 45;
+    const real V_DOOR = 30;
+
+    cont x = X_MIN der v;
+
+    alg real v =
+                if          a_door_right and x <= X_MAX:  V_DOOR
+                elif    not a_door_right and x >= X_MIN: -V_DOOR
+                else                                0
+                end;
+end

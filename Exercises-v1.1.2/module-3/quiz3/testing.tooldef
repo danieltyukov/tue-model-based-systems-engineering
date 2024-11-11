@@ -1,0 +1,6 @@
+from "lib:cif" import *;           // Imports the library to run CIF 3 files
+cifsim(
+   "testing.cif",
+   "-i gui",                        // Allow user input (default)
+   "--stateviz=1",                  // Shows the current state in real time
+);

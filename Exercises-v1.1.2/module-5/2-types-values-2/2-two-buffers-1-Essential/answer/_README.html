@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator and two buffers 1 answer &mdash; 4TC00 Exercises  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/design-tabs.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="3. Generator and two buffers 2" href="../../3-two-buffers-2/_README.html" />
+    <link rel="prev" title="2. Generator and two buffers 1 Essential" href="../_README.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../_README.html" class="icon icon-home">
+            4TC00 Exercises
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Module 1: Single automata</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/1-lamp-1-Essential/_README.html">1. Lamp 1 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/2-lamp-2-Essential/_README.html">2. Lamp 2 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/3-traffic-lights-1-Essential/_README.html">3. Traffic lights 1 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/4-two-place-buffer/_README.html">4. Two-place buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/5-dining-philosophers-1/_README.html">5. Dining philosophers 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/1-single-automata/6-state-space-Essential/_README.html">6. State space 1 <cite>Essential</cite></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 1: Networks of automata 1</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/2-networks-of-automata-1/1-button-lamp-Essential/_README.html">1. Button lamp <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/2-networks-of-automata-1/2-traffic-lights-2-Essential/_README.html">2. Traffic lights 2 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/2-networks-of-automata-1/3-state-space-2-Essential/_README.html">3. State space 2 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/2-networks-of-automata-1/4-state-space-3-Essential/_README.html">4. State space 3 <cite>Essential</cite></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 1: Shorter notations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/3-shorter-notation/1-long-model-Essential/_README.html">1. Long model <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/3-shorter-notation/2-two-place-buffer-2/_README.html">2. Two-place buffer 2</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 1: Networks of automata 2</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/4-networks-of-automata-2/1-machine-robot-machine-Essential/_README.html">1. Machine - robot - machine <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/4-networks-of-automata-2/2-machines-buffer-test-unit/_README.html">2. Machines - buffer - test unit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-1/4-networks-of-automata-2/3-dining-philosophers-2/_README.html">3. Dining philosophers 2</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 2: Types and values 1</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/1-types-values-1/1-operations-Essential/_README.html">1. Operations <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/1-types-values-1/2-integers-and-reals-Essential/_README.html">2. Integer and Real values <cite>Essential</cite></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 2: Data</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/1-referee-1/_README.html">1. Referee</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/2-parent-and-child/_README.html">2. Parent and Child</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/3-manufacturing-process-Essential/_README.html">3. Manufacturing process <cite>Essential</cite> </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/4-vending-machine-Essential/_README.html">4. Vending machine <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/5-buffer-black-white-Essential/_README.html">5. Buffer with black and white items <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-2/2-data/6-three-servers-1/_README.html">6. Three servers </a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 3: Reuse 1</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/1-scalable-reuse-1/1-referee-2/_README.html">1. Referee 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/1-scalable-reuse-1/2-height-check-Essential/_README.html">2. Height Check <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/1-scalable-reuse-1/3-bouncing-ball-1/_README.html">3. Bouncing Ball 1</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 3: Time</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/01-coffee-machine-Essential/_README.html">1. Coffee machine <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/02-inkscape-Essential/_README.html">2. Inkscape installation and setup <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/03-lamp-Essential/_README.html">3. Lamp with SVG visualization <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/04-conveyer-Essential/_README.html">4. Conveyer <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/05-pusher-Essential/_README.html">5. Pusher <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/06-pusher-with-visualisation-Essential/_README.html">6. Pusher with visualization <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/07-pusher-with-product/_README.html">7. Pusher with product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/08-bouncing-ball-2/_README.html">8. Bouncing ball 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/09-race/_README.html">9. Race</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/10-dancebot/_README.html">10. Robot dance revolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-3/2-time-svg/11-elevator/_README.html">11. Elevator</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 4: MBSE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-4/MBSE/1-double-sliding-doors/_README.html">1. Double sliding doors <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-4/MBSE/2-heater-window-system/_README.html">2. The heater and the window <cite>Essential</cite></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 5: Channels</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../1-channels/1-classroom-Essential/_README.html">1. Classroom <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../1-channels/2-dining-philosophers-3/_README.html">2. Dining philosophers 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../1-channels/3-conveyer-pusher-product/_README.html">3. Conveyer with pusher and product</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../1-channels/4-atm-and-bank-Essential/_README.html">4. ATM and bank <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../1-channels/5-dining-philosophers-4/_README.html">5. Dining philosophers 4</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 5: Types and Values 2</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../1-generalized-fifo-buffer-Essential/_README.html">1. Generalized FIFO buffer <cite>Essential</cite></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../_README.html">2. Generator and two buffers 1 <cite>Essential</cite></a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Answer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../3-two-buffers-2/_README.html">3. Generator and two buffers 2</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 5: Reuse 2</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../3-scalable-reuse-2/1-manufacturing-process-2-Essential/_README.html">1. Manufacturing process 2 <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../3-scalable-reuse-2/2-three-servers-3/_README.html">2. Three servers 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../3-scalable-reuse-2/3-frogger/_README.html">3. Frogger</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 6: Functions and Stochastics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-6/func-stochastics/1-priority-queue-Essential/_README.html">1. Priority queue <cite>Essential</cite></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-6/func-stochastics/2-fortune-wheel/_README.html">2. Wheel of fortune</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module 7: Git and Midterm assignment</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-7/git/_README.html">1. Install Git tooling <em>Essential</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../module-7/midterm/_README.html">2. Test entire toolchain <em>Essential</em></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../_README.html">4TC00 Exercises</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <!-- Empty breadcrumbs.html file ensures that the html files generated by sphinx do
+     not start with breadcrumbs of the selected html file in the browser. -->
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="generator-and-two-buffers-1-answer">
+<h1>Generator and two buffers 1 answer<a class="headerlink" href="#generator-and-two-buffers-1-answer" title="Permalink to this heading"></a></h1>
+<p>The CIF model for the generator and two buffers using lists is given in the
+<code class="docutils literal notranslate"><span class="pre">two-buffers.cif</span></code> file.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">two-buffers.cif</span><a class="headerlink" href="#id1" title="Permalink to this code"></a></div>
+<div class="highlight-cif notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">product</span> = <span class="k">tuple</span>(<span class="k">int</span> <span class="n">nr</span>; <span class="k">real</span> <span class="n">weight</span>; <span class="k">string</span> <span class="n">color</span>);
+
+<span class="c1">//This channel sends products</span>
+<span class="k">event</span> <span class="n">product</span> <span class="n">gen_b1</span>, <span class="n">gen_b2</span>;
+
+<span class="k">automaton</span> <span class="n">generator</span>:
+    <span class="k">disc</span> <span class="k">list</span> <span class="n">product</span> <span class="n">prods</span> = [(<span class="mi">1</span>, <span class="mf">2.5</span>, <span class="s">&quot;red&quot;</span>), (<span class="mi">2</span>, <span class="mi">15</span>, <span class="s">&quot;blue&quot;</span>), (<span class="mi">3</span>, <span class="mf">0.8</span>, <span class="s">&quot;grey&quot;</span>)];
+
+    <span class="k">location</span>:
+        <span class="k">initial</span>;
+        <span class="k">edge</span> <span class="n">gen_b1</span> ! <span class="n">prods</span>[<span class="mi">0</span>]
+            <span class="k">when</span> <span class="nf">size</span>(<span class="n">prods</span>) &gt;= <span class="mi">1</span> <span class="ow">and</span> <span class="nf">size</span>(<span class="n">buffer1.prods</span>) &lt;= <span class="nf">size</span>(<span class="n">buffer2.prods</span>)
+            <span class="k">do</span> <span class="n">prods</span> := <span class="n">prods</span>[<span class="mi">1</span>:];
+        <span class="k">edge</span> <span class="n">gen_b2</span> ! <span class="n">prods</span>[<span class="mi">0</span>]
+            <span class="k">when</span> <span class="nf">size</span>(<span class="n">prods</span>) &gt;= <span class="mi">1</span> <span class="ow">and</span> <span class="nf">size</span>(<span class="n">buffer1.prods</span>) &gt;  <span class="nf">size</span>(<span class="n">buffer2.prods</span>)
+            <span class="k">do</span> <span class="n">prods</span> := <span class="n">prods</span>[<span class="mi">1</span>:];
+<span class="k">end</span>
+
+<span class="k">automaton</span> <span class="n">buffer1</span>:
+    <span class="k">disc</span> <span class="k">list</span> <span class="n">product</span> <span class="n">prods</span> = [];
+
+    <span class="k">location</span>:
+        <span class="k">initial</span>;
+        <span class="k">edge</span> <span class="n">gen_b1</span> ? <span class="k">do</span> <span class="n">prods</span> := <span class="n">prods</span> + [?];
+<span class="k">end</span>
+
+<span class="k">automaton</span> <span class="n">buffer2</span>:
+    <span class="k">disc</span> <span class="k">list</span> <span class="k">tuple</span>(<span class="k">int</span> <span class="n">nr</span>; <span class="k">string</span> <span class="n">color</span>) <span class="n">prods</span> = [];
+
+    <span class="k">location</span>:
+        <span class="k">initial</span>;
+        <span class="c1">// Receive new product,</span>
+        <span class="c1">// construct a new tuple consisting of nr and color of the received product,</span>
+        <span class="c1">// and put the new tuple at the end of the list prods.</span>
+        <span class="k">edge</span> <span class="n">gen_b2</span> ? <span class="k">do</span> <span class="n">prods</span> := <span class="n">prods</span> + [ ( ?[<span class="n">nr</span>], ?[<span class="n">color</span>] ) ];
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright  Eindhoven University of Technology, 13 Nov 2023.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script> 
+
+</body>
+</html>

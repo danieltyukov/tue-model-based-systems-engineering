@@ -1,0 +1,25 @@
+event a, b, c, d, e;
+
+automaton A:
+    location A1:
+        initial;
+        edge b;
+        edge a goto A2;
+
+    location A2:
+        edge b;
+        edge c goto A3;
+
+    location A3:
+        edge d, e goto A2;
+end
+
+automaton B:
+    location B1:
+        edge d;
+        edge b goto B2;
+
+    location B2:
+        initial;
+        edge e goto B1;
+end

@@ -1,0 +1,7 @@
+from "lib:cif" import *;             //Imports the library to run CIF 3 files
+
+cifsim(
+   "two-buffers-arrays.cif",
+   "--stateviz=1",
+   "-i gui",                         // Allow user input
+);

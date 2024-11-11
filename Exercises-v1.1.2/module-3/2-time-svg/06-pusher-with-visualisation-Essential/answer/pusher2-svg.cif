@@ -1,0 +1,11 @@
+import  "pusher2.cif";
+svgfile "pusher.svg";
+
+const real SVGfactor = 20;
+
+svgin id "a_pusher" event u_pusher_toggle;
+
+
+svgout id "g_shaft_head" attr "transform" value fmt("translate(%s,0)", x * SVGfactor);
+
+svgout id "a_pusher"     attr "fill"      value if a_pusher: "green" else "lightgrey" end;

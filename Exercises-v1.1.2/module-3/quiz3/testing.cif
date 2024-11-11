@@ -1,0 +1,15 @@
+event wait, reset;
+
+automaton movement:
+  cont t der 1;
+  alg bool busy;
+
+  location start:
+    initial;
+    equation busy = true;
+    edge wait when t > 10 goto waiting;
+
+  location waiting:
+    equation busy = false;
+    edge reset when t > 20 do t:= 0 goto start;
+end

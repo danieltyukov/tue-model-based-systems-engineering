@@ -1,0 +1,8 @@
+import "hw-plant.cif";
+
+// INPUTS
+input bool a_heater;
+
+
+// OUTPUTS
+alg bool s_window_closed   = window.s_window_closed;

@@ -1,0 +1,8 @@
+const real V_BELT = 1;      // belt velocity when moving
+
+alg bool a_conveyer = if time <= 2: false elif time < 7: true else false end;
+
+// position of a product on the belt, initially x = 0
+cont x = 0;
+
+equation x' = V_BELT * if a_conveyer: 1 else 0 end;

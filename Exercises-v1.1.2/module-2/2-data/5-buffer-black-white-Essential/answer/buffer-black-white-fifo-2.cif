@@ -1,0 +1,31 @@
+// FIFO buffer for two items
+
+automaton buffer_bw:
+    event in_b, in_w, out_b, out_w;
+    location is_empty:
+        initial;
+        edge in_b  goto b;
+        edge in_w  goto w;
+
+    location b:
+        edge in_b  goto bb;
+        edge in_w  goto bw;
+        edge out_b goto is_empty;
+
+    location w:
+        edge in_b  goto wb;
+        edge in_w  goto ww;
+        edge out_w goto is_empty;
+
+    location bb:
+        edge out_b goto b;
+
+    location bw:
+        edge out_b goto w;
+
+    location wb:
+        edge out_w goto b;
+
+    location ww:
+        edge out_w goto w;
+end

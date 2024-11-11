@@ -1,0 +1,14 @@
+from "lib:cif" import *;           // Imports the library to run CIF 3 files
+
+cifsim(
+   "three-servers.cif",
+   "-i gui",                        // Allow user input (default)
+//    "-i svg",                         // Allows input from the SVG file
+//    "--frame-rate=20",                // Sets the rate at which the output is sent
+//    "-i auto",                        // Enables automatic event selection
+   "--stateviz=1",                  // Shows the current state in real time
+//    "-t 10",                          // Sets the end time of the simulation to 10 time units
+//    "--solver-root-maxchk=0.01",      // Sets the maximum check interval for solvers (default=0.5)
+//    "--plotviz=1",                    // Shows the development of variables over time
+//    "--help",                         // Shows the help text
+);

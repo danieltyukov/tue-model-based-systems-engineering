@@ -1,0 +1,8 @@
+from "lib:cif" import *;  //Imports the library to run CIF 3 files
+
+cifsim(
+    "clickable-lamp.cif",
+   //"-i gui",            // Allow user input
+   "-i svg",              // Allows input from the SVG file
+   "--frame-rate=20",     // Sets the frame-rate of the visualization
+);

@@ -1,0 +1,48 @@
+event pick1, drop2;
+
+automaton M1:
+    event receive, reject;
+
+    location Receive:
+        initial;
+        edge receive    goto Process;
+
+    location Process:
+        edge pick1      goto Receive;
+        edge receive    goto Reject;
+
+    location Reject:
+        edge reject    goto Process;
+end
+
+automaton RA:
+    event move12, move21;
+
+    location Receive:
+        initial;
+        edge pick1      goto Transport1;
+
+    location Transport1:
+        edge move12     goto Send;
+
+    location Send:
+        edge drop2      goto Transport2;
+
+    location Transport2:
+        edge move21     goto Receive;
+end
+
+automaton M2:
+    event send, reject;
+
+    location Receive:
+        initial;
+        edge drop2      goto Process;
+
+    location Process:
+        edge send       goto Receive;
+        edge drop2      goto Reject;
+
+    location Reject:
+        edge reject    goto Process;
+end

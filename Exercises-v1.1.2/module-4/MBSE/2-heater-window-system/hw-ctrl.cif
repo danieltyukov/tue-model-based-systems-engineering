@@ -1,0 +1,20 @@
+
+import "hw-ctrl-io.cif";
+
+automaton controller:
+    alg bool a_heater = controller.on;
+
+    cont t der -1;
+
+    event turn_off, to_turn_on_wait, turn_on;
+
+    location on:
+        initial;
+        edge turn_off   when not s_window_closed    goto off;
+
+    location off:
+        edge to_turn_on_wait   when s_window_closed    do t := 2    goto turn_on_wait;
+
+    location turn_on_wait:
+        edge turn_on    when t <= 0                                 goto on;
+end

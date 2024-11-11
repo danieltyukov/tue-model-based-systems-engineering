@@ -1,0 +1,42 @@
+uncontrollable u_dance_1, u_dance_2, u_dance_3;
+
+automaton dancer:
+    monitor;
+    const real f = 1.0 * 2 * 3.14;
+    alg real a; // body
+    alg real b; // upper body
+    alg real c; // arm left
+    alg real d; // arm right;
+    alg real l; // piston length
+
+    location dance_1:
+        initial;
+        equation a = 25 * cos(time * f);
+        equation b = -1.5 * 25 * cos(time * f);
+        equation c = 25  *  cos(time * f);
+        equation d = 25  *  cos(time * f);
+        equation l = 100.0;
+
+        edge u_dance_2 goto dance_2;
+        edge u_dance_3 goto dance_3;
+
+    location dance_2:
+        equation a = 0.0;
+        equation b = 0.0;
+        equation c = -25 * cos(time * f  +  0.5 * 3.14);
+        equation d = 25 * cos(time * f + 0.5 * 3.14);
+        equation l = 100 + 25 * cos(time * f);
+
+        edge u_dance_1 goto dance_1;
+        edge u_dance_3 goto dance_3;
+
+    location dance_3:
+        equation a = 20 * cos(time * f/2);
+        equation b = 20 * cos(time * f/2);
+        equation c = 145 * cos(time * f/2)-90.0;
+        equation d = 145 * cos(time * f/2) + 90.0;
+        equation l = 100.0 + 20 * cos(time * f);
+
+        edge u_dance_1 goto dance_1;
+        edge u_dance_2 goto dance_2;
+end

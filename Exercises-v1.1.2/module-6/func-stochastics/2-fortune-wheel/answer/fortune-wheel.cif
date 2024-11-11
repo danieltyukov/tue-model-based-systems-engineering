@@ -1,0 +1,74 @@
+uncontrollable u_red, u_green, u_yellow, u_blue, u_StartStop;
+
+alg string colorWheel =  if   (fortuneWheel.x >=   0 and fortuneWheel.x <  90): "red"
+                         elif (fortuneWheel.x >=  90 and fortuneWheel.x < 180): "green"
+                         elif (fortuneWheel.x >= 180 and fortuneWheel.x < 270): "yellow"
+                         else "blue" end;
+
+automaton fortuneWheel:
+    alg real a;
+    disc int score;
+    cont x der v;
+    cont v der a;
+
+    disc dist real r = normal(60,90);
+    disc real randomTime;
+
+    monitor;
+
+    location Spinning:
+        equation a = 0;
+        edge when x > 360 do x := 0;
+        edge u_StartStop do (randomTime,r) := sample r goto Stopping;
+
+    location Stopping:
+        equation a = -randomTime;
+        edge when x > 360 do x := 0;
+        edge when v <= 0 goto CheckScore;
+
+    location CheckScore:
+        equation a = 0;
+        edge when     (Choice.color = colorWheel) do score := score+1 goto Stopped;
+        edge when not (Choice.color = colorWheel)                     goto Stopped;
+
+    location Stopped:
+        initial;
+        equation a = 0;
+        edge u_StartStop do v := 296 goto Spinning;
+end
+
+automaton Choice:
+    monitor;
+    alg string color;
+    location black:
+        initial;
+        equation color = "black";
+        edge u_red    when fortuneWheel.Stopped goto red;
+        edge u_green  when fortuneWheel.Stopped goto green;
+        edge u_yellow when fortuneWheel.Stopped goto yellow;
+        edge u_blue   when fortuneWheel.Stopped goto blue;
+
+    location red:
+        equation color = "red";
+        edge u_green  when fortuneWheel.Stopped goto green;
+        edge u_yellow when fortuneWheel.Stopped goto yellow;
+        edge u_blue   when fortuneWheel.Stopped goto blue;
+
+    location green:
+        equation color = "green";
+        edge u_red    when fortuneWheel.Stopped goto red;
+        edge u_yellow when fortuneWheel.Stopped goto yellow;
+        edge u_blue   when fortuneWheel.Stopped goto blue;
+
+    location yellow:
+        equation color = "yellow";
+        edge u_red    when fortuneWheel.Stopped goto red;
+        edge u_green  when fortuneWheel.Stopped goto green;
+        edge u_blue   when fortuneWheel.Stopped goto blue;
+
+    location blue:
+        equation color = "blue";
+        edge u_red    when fortuneWheel.Stopped goto red;
+        edge u_green  when fortuneWheel.Stopped goto green;
+        edge u_yellow when fortuneWheel.Stopped goto yellow;
+end

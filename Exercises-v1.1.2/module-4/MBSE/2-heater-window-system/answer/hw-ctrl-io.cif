@@ -1,0 +1,7 @@
+import "hw-ctrl.cif";
+
+// INPUTS
+input bool s_window_closed;
+
+// OUTPUTS
+alg bool a_heater = controller.a_heater;

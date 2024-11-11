@@ -1,0 +1,7 @@
+from "lib:cif" import *;             //Imports the library to run CIF 3 files
+
+cifsim(
+   "fortune-wheel-svg.cif",
+   "-i svg",                         // Allow user input
+   "--frame-rate=20",
+);

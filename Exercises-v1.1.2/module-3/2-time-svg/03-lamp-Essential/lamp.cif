@@ -1,0 +1,12 @@
+svgfile "lamp.svg";
+
+automaton lamp:
+    event turn_on, turn_off;
+
+    location On:
+        initial;
+        edge turn_off  goto Off;
+
+    location Off:
+        edge turn_on    goto On;
+end

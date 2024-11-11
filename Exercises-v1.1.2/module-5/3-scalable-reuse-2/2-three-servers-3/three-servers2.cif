@@ -1,0 +1,44 @@
+event s1_q1, s1_q2, s1_q3;
+
+automaton Q1:
+    event rcv;
+
+    disc int n = 0;
+
+    location:
+        initial;
+        edge rcv    when n + Q2.n + Q3.n <= 2 and S1.receive    do n := n + 1;
+        edge rcv    when n + Q2.n + Q3.n <= 1 and S1.send       do n := n + 1;
+        edge s1_q1  when n > 0                                  do n := n - 1;
+end
+
+automaton Q2:
+    event snd;
+
+    disc int n = 0;
+
+    location:
+        initial;
+        edge s1_q2              do n := n + 1;
+        edge snd    when n > 0  do n := n - 1;
+end
+
+automaton Q3:
+    event snd;
+
+    disc int n = 0;
+
+    location:
+        initial;
+        edge s1_q3              do n := n + 1;
+        edge snd    when n > 0  do n := n - 1;
+end
+
+automaton S1:
+    location receive:
+        initial;
+        edge s1_q1          goto send;
+
+    location send:
+        edge s1_q2, s1_q3   goto receive;
+end

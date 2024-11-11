@@ -1,0 +1,18 @@
+const real g = 9.81;        // gravitational acceleration
+
+automaton ball:
+    event bounce, sidebounceright, sidebounceleft;
+    const real COR = 0.75;  // coefficient of restitution
+    const real wall = 25;   // location of the wall
+    cont y = 15 der vy;     // y' = v, y" = v' = -g
+    cont vy     der -g;
+    cont x = 0 der vx;
+    disc real vx = 10;
+
+    location:
+        initial;
+        // On impact, the velocity changes sign and diminishes
+        edge bounce when y <= 0 and vy < 0 do vy := - vy * COR;
+        edge sidebounceright when x >= wall and vx > 0 do vx := -vx * COR;
+        edge sidebounceleft  when x <= 0    and vx < 0 do vx := -vx * COR;
+end

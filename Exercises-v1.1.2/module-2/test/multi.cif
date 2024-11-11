@@ -1,0 +1,19 @@
+automaton Fibonacci:
+    event next, swap1, swap2;
+    disc int x = 1, y = 1;
+
+    const bool k = false;
+const bool l = false;
+
+disc bool z = k != l;
+
+print(k);
+
+
+    location:
+        initial;
+        edge next do (x, y) := (x + y, x);
+        edge swap1 do y := x + 1, x := y;
+        edge swap2 do x := y,     y := x + 1;
+        print(z);
+end

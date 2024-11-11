@@ -1,0 +1,16 @@
+import "sd2-ctrl-io.cif";
+
+automaton controller:
+    alg bool a_door_left = open;
+    alg bool a_door_right = open;
+
+    event opening, closing;
+
+    location closed:
+        initial;
+        edge opening when s_motion      goto open;
+
+    location open:
+        edge closing when not s_motion  goto closed;
+
+end

@@ -1,0 +1,14 @@
+import "sd-plant.cif";
+
+svgfile "sliding-doors2.svg";
+
+// INPUTS
+svgin id "person" event u_person;
+
+// OUTPUTS
+svgout id "person"       attr "display"   value if person.x >= person.X_MAX - 5: "none" else "inline" end;
+svgout id "s_motion"     attr "fill"      value if s_motion: "green" else "red" end;
+
+svgout id "person"       attr "transform" value fmt("translate(%s,0)", person.x);
+svgout id "sliding_door_right" attr "transform" value fmt("translate(%s,0)", slidingDoor.x);
+svgout id "sliding_door_left" attr "transform" value fmt("translate(%s,0)", slidingDoor2.x);

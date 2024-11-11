@@ -1,0 +1,7 @@
+from "lib:cif" import *;
+
+cifsim(
+    "ask.cif",
+    "-i gui", // allow user input
+    //"-i auto",  // automatic events
+);

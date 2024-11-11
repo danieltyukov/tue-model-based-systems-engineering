@@ -1,0 +1,50 @@
+import "elevator-plant2.cif";
+svgfile "elevator.svg";
+
+// elevator vertical position
+// elevator should go up for increasing value of y
+// In SVG coordinates, the positive y direction is downwards
+svgout id "elevator" attr "transform" value fmt("translate(0,%s)", scale(y, 1, 3, 0, -400));
+
+//doors
+svgout id "leftdoor"  attr "width" value 10 + x_d * 50;
+svgout id "rightdoor" attr "width" value 10 + x_d * 50;
+svgout id "rightdoor" attr "x"     value 320 - (10 + x_d * 50);
+
+//sensors
+svgout id "s_floor1" attr "fill" value if s_floor1: "green" else "red" end;
+svgout id "s_floor2" attr "fill" value if s_floor2: "green" else "red" end;
+svgout id "s_floor3" attr "fill" value if s_floor3: "green" else "red" end;
+
+svgout id "s_doors_closed" attr "fill" value if s_doors_closed: "green" else "red" end;
+
+//actuators
+svgout id "a_close_doors"  attr "fill" value if a_close_doors: "green" else "grey" end;
+svgout id "a_lift_up"      attr "fill" value if a_lift_up:     "green" else "grey" end;
+svgout id "a_lift_down"    attr "fill" value if a_lift_down:   "green" else "grey" end;
+
+// events for manual controller
+svgin id "a_lift_up"     event u_lift_up;
+svgin id "a_lift_down"   event u_lift_down;
+svgin id "a_close_doors" event u_close_doors;
+
+//elevator call buttons on floor
+svgin id "up1"   event u_up1;
+svgin id "up2"   event u_up2;
+svgin id "down2" event u_down2;
+svgin id "down3" event u_down3;
+
+// buttons in elevator
+svgin id "button_floor1" event u_floor1;
+svgin id "button_floor2" event u_floor2;
+svgin id "button_floor3" event u_floor3;
+
+// elevator button lights
+svgout id "up1"   attr "fill" value if s_req_up1:   "green" else "grey" end;
+svgout id "up2"   attr "fill" value if s_req_up2:   "green" else "grey" end;
+svgout id "down2" attr "fill" value if s_req_down2: "green" else "grey" end;
+svgout id "down3" attr "fill" value if s_req_down3: "green" else "grey" end;
+
+svgout id "button_floor1" attr "fill" value if s_req_floor1: "green" else "grey" end;
+svgout id "button_floor2" attr "fill" value if s_req_floor2: "green" else "grey" end;
+svgout id "button_floor3" attr "fill" value if s_req_floor3: "green" else "grey" end;

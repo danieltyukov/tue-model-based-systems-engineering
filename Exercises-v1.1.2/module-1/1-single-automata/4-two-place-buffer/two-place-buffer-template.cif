@@ -1,0 +1,13 @@
+automaton B:
+    event a, b, c;
+
+    location zero:
+        initial;
+        ... ; // add your own code here
+
+    location one:
+        ... ;
+
+    location two:
+        ... ;
+end

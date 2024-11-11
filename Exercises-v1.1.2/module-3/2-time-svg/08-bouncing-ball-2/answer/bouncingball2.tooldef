@@ -1,0 +1,8 @@
+from "lib:cif" import *;             //Imports the library to run CIF 3 files
+
+cifsim(
+   "bouncingball2.cif",
+   "-i auto",                       // Allow user input
+   "--plotviz=1",                   // Shows the current state in real time
+   "-t 7",                          // Sets end time to 15 seconds
+);

@@ -1,0 +1,7 @@
+from "lib:cif" import *;
+
+cifsim(
+    "manufact-process2.cif",
+    "-i gui",
+    "--stateviz=1",
+);

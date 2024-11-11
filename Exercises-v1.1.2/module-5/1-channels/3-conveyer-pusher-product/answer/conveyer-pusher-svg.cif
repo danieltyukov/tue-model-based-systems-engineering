@@ -1,0 +1,19 @@
+import  "conveyer-pusher.cif";
+svgfile "conveyer-pusher.svg";
+
+const real SVGfactor = 20;
+
+svgin  id "a_pusher"    event u_pusher_toggle;
+svgin  id "a_conveyer"  event u_conveyer_toggle;
+
+svgout id "g_shaft_head"     attr "transform" value fmt("translate(0,%s)", -pusher.y_pusher * SVGfactor);
+
+svgout id "product_conveyer" attr "transform" value fmt("translate(%s,0)", conveyer.x * SVGfactor);
+svgout id "product_pusher"   attr "transform" value fmt("translate(0,%s)", -pusher.y_product * SVGfactor);
+
+svgout id "product_conveyer" attr "display"   value if conveyer.has_prod: "inline" else "none" end;
+svgout id "product_pusher"   attr "display"   value if pusher.has_prod:   "inline" else "none" end;
+
+svgout id "a_pusher"         attr "fill"      value if a_pusher:   "green" else "lightgrey" end;
+svgout id "a_conveyer"       attr "fill"      value if a_conveyer: "green" else "lightgrey" end;
+svgout id "conveyer"         attr "fill"      value if a_conveyer: "green" else "lightgrey" end;
