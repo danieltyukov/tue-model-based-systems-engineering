@@ -1,7 +1,0 @@
-from "lib:cif3" import *;
-
-cif3sim(
-    "referee.cif",
-   "-i gui", // allow user input
-   //"-i auto",  // automatic events
-);

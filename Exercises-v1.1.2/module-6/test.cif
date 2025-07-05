@@ -1,8 +1,0 @@
-func hh_mm_ss():
-    int t       = round(time);
-    int hours   =  t div 3600;
-    int minutes = (t mod 3600) div 60;
-    int seconds =  (t mod 3600) mod 60;
-
-    return [hours, minutes, seconds];
-end

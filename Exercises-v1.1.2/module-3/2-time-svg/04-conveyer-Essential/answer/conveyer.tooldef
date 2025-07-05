@@ -1,9 +1,0 @@
-from "lib:cif" import *;
-
-cifsim(
-    "conveyer.cif",
-    "-t 5",
-    "-i auto",
-    "--plotviz=1",
-    "--plotviz-mode=live",
-);

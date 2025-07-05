@@ -1,5 +1,0 @@
-automaton controller4:
-    location Idle:
-        initial;
-        edge repair_M1 when not M2.Down;
-end

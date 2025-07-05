@@ -1,7 +1,0 @@
-from "lib:cif" import *;  //Imports the library to run CIF 3 files
-
-cifsim(
-   "pusher3-svg.cif",
-   "-i svg",
-   "--frame-rate=20"
-);

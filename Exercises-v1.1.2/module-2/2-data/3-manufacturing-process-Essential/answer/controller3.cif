@@ -1,5 +1,0 @@
-automaton controller3:
-    location Idle:
-        initial;
-        edge start_M1 when not M2.Down;
-end

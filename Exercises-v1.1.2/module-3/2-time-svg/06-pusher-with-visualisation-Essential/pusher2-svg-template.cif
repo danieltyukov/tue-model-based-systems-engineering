@@ -1,4 +1,0 @@
-import  "pusher2-template.cif";
-svgfile "pusher.svg";
-
-//...

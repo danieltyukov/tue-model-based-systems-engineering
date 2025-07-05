@@ -1,8 +1,0 @@
-import "sd-ctrl.cif";
-
-// INPUTS
-input bool s_motion;
-
-// OUTPUTS
-alg bool a_door = controller.a_door;
-alg bool a_door2 = controller.a_door2;

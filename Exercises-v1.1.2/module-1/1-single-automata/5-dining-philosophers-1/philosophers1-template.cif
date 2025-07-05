@@ -1,9 +1,0 @@
-automaton dining_philosophers:
-    event p1f1,... ;
-
-    location TT:
-        initial;
-        ... ;
-
-    ...
-end

@@ -1,7 +1,0 @@
-from "lib:cif" import *;
-
-cifsim(
-    "referee2.cif",
-   "-i gui", // allow user input
-   //"-i auto",  // automatic events
-);

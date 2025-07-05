@@ -1,7 +1,0 @@
-automaton machine:
-    event action;
-
-    location machine1:
-        initial;
-        edge action;
-end

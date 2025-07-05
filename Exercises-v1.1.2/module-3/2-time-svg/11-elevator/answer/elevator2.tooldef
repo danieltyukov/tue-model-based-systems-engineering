@@ -1,9 +1,0 @@
-from "lib:cif" import *;             //Imports the library to run CIF 3 files
-
-cifsim(
-   "elevator-svg2.cif",
-   "--stateviz=1",
-   "-i svg",
-   "--frame-rate=20",
-   "--solver-root-maxchk=0.01",
-);

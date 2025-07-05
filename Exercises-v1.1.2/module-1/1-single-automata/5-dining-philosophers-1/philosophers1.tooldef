@@ -1,9 +1,0 @@
-from "lib:cif" import *;           // Imports the library to run CIF 3 files
-
-cifsim(
-   "philosophers1-template.cif",
-   "-i gui",                        // Allow user input (default)
-   //"-i auto",                       // Enables automatic event selection
-   "--stateviz=1",                  // Shows the current state in real time
-//   "--help",                        // Shows the help text
-);

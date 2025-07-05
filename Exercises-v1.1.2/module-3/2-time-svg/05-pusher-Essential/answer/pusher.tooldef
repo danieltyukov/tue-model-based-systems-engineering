@@ -1,9 +1,0 @@
-from "lib:cif" import *;   //Imports the library to run CIF 3 files
-
-cifsim(
-   "pusher.cif",
-   "-i auto",               // Allow user input
-   "--plotviz=1",           // Shows the current state in real time
-   "--plotviz-filter=a_pusher,v,x",
-   "-t 8",
-);

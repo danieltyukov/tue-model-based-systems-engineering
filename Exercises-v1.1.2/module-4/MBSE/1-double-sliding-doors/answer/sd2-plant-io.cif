@@ -1,9 +1,0 @@
-import "sd2-plant.cif";
-
-// INPUTS
-input bool a_door_left;
-input bool a_door_right;
-
-
-// OUTPUTS
-alg bool s_motion = 30 <= person.x and person.x <= 80;

@@ -1,9 +1,0 @@
-// Normal heights
-const real maximum = 1.9;
-const real minimum = 1.5;
-
-// Height of checked person
-const real height  = 1.7;
-
-// One is healthy if in the normal heights range
-alg  bool healthy = minimum <= height and height <= maximum;

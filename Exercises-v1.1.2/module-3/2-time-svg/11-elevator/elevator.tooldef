@@ -1,9 +1,0 @@
-from "lib:cif" import *;
-
-cifsim(
-   "elevator-svg.cif",
-   "--stateviz=1",
-   "-i svg",
-   "--frame-rate=20",
-   "--solver-root-maxchk=0.05",
-);
